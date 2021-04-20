@@ -1,4 +1,4 @@
-#MiniTerminal 🗃️
+# MiniTerminal 🗃️
 
 Nuestra intención es crear una terminal lo mas optimizada posible para la gestión de ficheros, este es un proyecto educativo y sin nigun tipo de fines lucrativos.
 > El proyecto no seguira mantenido despues de su finalización.
