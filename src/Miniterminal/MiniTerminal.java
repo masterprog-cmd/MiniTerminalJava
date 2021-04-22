@@ -37,12 +37,17 @@ public class MiniTerminal {
 				break;
 			case "help":
 				clearScreen();
+				if (command.length > 1)
+					printHelp(command[1]);
+				else
+					printHelp();
 				break;
 			case "exit":
 				System.out.println("Quitting...");
 				System.exit(0);
 				break;
 			default:
+				System.out.println("[MiniTerminal] No such command. Try 'help' to see the avaliable commands.");
 				break;
 			}
 		}
@@ -53,6 +58,53 @@ public class MiniTerminal {
 		printPrompt();
 		String command = in.nextLine();
 		return command;
+	}
+
+	private static void printHelp() {
+		System.out.println("Welcome to the help!\n" + "Use: 'help [command]' for specific info of a command\n"
+				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "rm\n" + "mv\n" + "help\n"
+				+ "exit");
+	}
+
+	private static void printHelp(String arg) {
+		switch (arg) {
+		case "pwd":
+			System.out
+					.println("[MiniTerminal HELP] Use that command to print the working directory.\n" + "Syntax: pwd");
+			break;
+		case "cd":
+			System.out.println("[MiniTerminal HELP] Use that command to change the working.\n" + "Syntax: cd [path]");
+			break;
+		case "ls":
+			System.out.println("[MiniTerminal HELP] Use that command to list the contests of a directory.\n"
+					+ "Syntax: ls [path]");
+			break;
+		case "ll":
+			System.out.println(
+					"[MiniTerminal HELP] Use that command to list the contents of a directory with more info.\n"
+							+ "Syntax: ll [path]");
+			break;
+		case "mkdir":
+			System.out.println("[MiniTerminal HELP] Use that command to make a directory.\n" + "Syntax: mkdir <path>");
+			break;
+		case "rm":
+			System.out.println(
+					"[MiniTerminal HELP] Use that command to remove a file or a directory.\n" + "Syntax: rm <path>");
+			break;
+		case "mv":
+			System.out.println("[MiniTerminal HELP] Use that command to move a file across directories or rename it.\n"
+					+ "Syntax: mv <path> <path>");
+			break;
+		case "help":
+			System.out.println("[MiniTerminal HELP] Use that command to show this help.\n" + "Syntax: help [command]");
+			break;
+		case "exit":
+			System.out.println("[MiniTerminal HELP] Use that command to terminate the program.\n" + "Syntax: exit");
+			break;
+		default:
+			System.out.println("[MiniTerminal HELP] No such command. Try 'help' to see the avaliable commands.");
+			break;
+		}
 	}
 
 	private static void printPrompt() {
@@ -71,7 +123,8 @@ public class MiniTerminal {
 				+ "| .  . | _  _ __   _   | |    ___  _ __  _ __ ___   _  _ __    __ _ | |\n"
 				+ "| |\\/| || || '_ \\ | |  | |   / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |\n"
 				+ "| |  | || || | | || |  | |  |  __/| |   | | | | | || || | | || (_| || |\n"
-				+ "\\_|  |_/|_||_| |_||_|  \\_/   \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|");
+				+ "\\_|  |_/|_||_| |_||_|  \\_/   \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|\n"
+				+ "                                              type 'help' for more info");
 	}
 
 	private static void clearScreen() {
