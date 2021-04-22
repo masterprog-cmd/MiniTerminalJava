@@ -26,6 +26,9 @@ public class FileManager {
 	}
 
 	public static boolean mkdir(String arg) {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
 		File a = new File(arg);
 		if (!a.exists()) {
 			if (a.mkdirs())
@@ -36,11 +39,14 @@ public class FileManager {
 		return false;
 	}
 
-	public static boolean rmArch(String path) throws FileNotFoundException {
-		File rm = new File(path);
-		if (!rm.exists())
+	public static boolean rm(String arg) throws FileNotFoundException {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File rm = new File(arg);
+		if (!rm.exists()) {
 			throw new FileNotFoundException("The directory entered doesn't exist.");
-
+		}
 		if (rm.isDirectory()) {
 			for (File mirar : rm.listFiles()) {
 				if (mirar.isDirectory()) {
@@ -113,6 +119,7 @@ public class FileManager {
 	}
 
 	public static void ll(String arg) throws Exception {
+
 		if (!arg.startsWith("/")) {
 			arg = relToAbs(arg);
 		}
@@ -137,6 +144,13 @@ public class FileManager {
 			}
 		}
 	}
+	/*
+	 * public static void mv(String arg, String arg1) { if (!arg.startsWith("/")) {
+	 * arg = relToAbs(arg); } if (!arg1.startsWith("/")) { arg1 = relToAbs(arg1); }
+	 * File a = new File(arg); File b = new File(arg1); if (a.renameTo(b))
+	 * System.out.println(a.getAbsolutePath() + "-" + b.getAbsolutePath()); else
+	 * System.out.println("pipes"); }
+	 */
 
 	public static String relToAbs(String relPath) {
 		String path;
