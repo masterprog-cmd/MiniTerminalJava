@@ -138,4 +138,12 @@ public class MiniTerminal {
 			System.err.println("[!] clearScreen() no se ejecuto correctamente.");
 		}
 	}
+
+	public static File getWd() {
+		return wd;
+	}
+
+	public static void setWd(File wd) {
+		MiniTerminal.wd = wd;
+	}
 }

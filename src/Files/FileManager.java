@@ -1,4 +1,4 @@
-package Fitxers;
+package Files;
 import java.io.*;
 
 public class FileManager {
