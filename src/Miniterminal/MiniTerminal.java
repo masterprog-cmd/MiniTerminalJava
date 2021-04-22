@@ -5,21 +5,21 @@ import java.util.Scanner;
 
 public class MiniTerminal {
 
-	public static boolean isRunning = true;
+	private static boolean isRunning = true;
 	protected static String systemName = System.getProperty("os.name");
 	protected static String user = System.getProperty("user.name");
 	protected static File wd = new File(System.getProperty("user.home"));
 
 	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
 		if (user == "root") {
 			System.out.println("No puedes ejecutar esta aplicación con el usuario ROOT");
 			System.exit(1);
 		}
 		clearScreen();
+		printWelcome();
 		while (isRunning) {
-			String[] comando = prompt().split(" ");
-			switch (comando[0]) {
+			String[] command = prompt().split(" ");
+			switch (command[0]) {
 			case "pwd":
 				System.out.println(wd);
 				break;
@@ -36,7 +36,7 @@ public class MiniTerminal {
 			case "mv":
 				break;
 			case "help":
-				System.out.println("Help info");
+				clearScreen();
 				break;
 			case "exit":
 				System.out.println("Quitting...");
@@ -48,24 +48,41 @@ public class MiniTerminal {
 		}
 	}
 
-	public static String prompt() {
+	private static String prompt() {
 		Scanner in = new Scanner(System.in);
 		printPrompt();
-		String comando = in.nextLine();
-		return comando;
+		String command = in.nextLine();
+		return command;
 	}
-	
-	
-	public static void printPrompt() {
+
+	private static void printPrompt() {
 		if (wd.getAbsolutePath() == System.getProperty("user.home"))
-			System.out.print("⁂  " + user + "@" + systemName + " ϟ ~ ➲ ");
-		else
-			System.out.print("⁂  " + user + "@" + systemName + " ϟ " + wd + " ➲ ");
-
-	}
-	
-	public static void clearScreen() {  
-		for (int i = 0; i < 50; ++i) System.out.println();
+			System.out.print("⁂ " + user + "@" + systemName + " ϟ ~ ➲ ");
+		else if (wd.getAbsolutePath().startsWith(System.getProperty("user.home"))) {
+			String finalPath = wd.getAbsolutePath().replace(System.getProperty("user.home"), "~/");
+			System.out.print("⁂ " + user + "@" + systemName + " ϟ " + finalPath + " ➲ ");
+		} else
+			System.out.print("⁂ " + user + "@" + systemName + " ϟ " + wd + " ➲ ");
 	}
 
+	private static void printWelcome() {
+		System.out.println("___  ___ _         _  _____                         _                _ \n"
+				+ "|  \\/  |(_)       (_)|_   _|                       (_)              | |\n"
+				+ "| .  . | _  _ __   _   | |    ___  _ __  _ __ ___   _  _ __    __ _ | |\n"
+				+ "| |\\/| || || '_ \\ | |  | |   / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |\n"
+				+ "| |  | || || | | || |  | |  |  __/| |   | | | | | || || | | || (_| || |\n"
+				+ "\\_|  |_/|_||_| |_||_|  \\_/   \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|");
+	}
+
+	private static void clearScreen() {
+		try {
+			if (systemName.contains("Windows")) {
+				Runtime.getRuntime().exec("cls");
+			} else {
+				Runtime.getRuntime().exec("clear");
+			}
+		} catch (final Exception e) {
+			System.err.println("[!] clearScreen() no se ejecuto correctamente.");
+		}
+	}
 }
