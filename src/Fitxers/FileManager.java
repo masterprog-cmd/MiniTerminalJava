@@ -142,11 +142,11 @@ public class FileManager {
 		String path;
 		if (relPath.startsWith("..")) {
 			File parentFolder = new File(MiniTerminal.getWd().getParent());
-			File Absolute = new File(parentFolder, relPath);
+			File Absolute = new File(parentFolder, relPath.replace("..", ""));
 			path = Absolute.getAbsolutePath();
 		} else if (relPath.startsWith(".")) {
 			File parentFolder = new File(MiniTerminal.getWd().getAbsolutePath());
-			File Absolute = new File(parentFolder, relPath);
+			File Absolute = new File(parentFolder, relPath.replace(".", ""));
 			path = Absolute.getAbsolutePath();
 		} else {
 			File parentFolder = new File(MiniTerminal.getWd().getAbsolutePath());
