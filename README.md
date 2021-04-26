@@ -10,6 +10,7 @@ cd <DIR>
 ls
 ll
 mkdir <DIR>
+touch <FILE>
 rm <FILE>
 mv <FILE1> <FILE2>
 help
