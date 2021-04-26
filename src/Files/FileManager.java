@@ -143,11 +143,11 @@ public class FileManager {
 		} else {
 			for (int i = 0; i < listado.length; i++) {
 				if (listado[i].isDirectory())
-					System.out.println(listado[i].length() + "bytes,  " + fechaMod.format(listado[i].lastModified())
-							+ "   " + listado[i].getName() + "/");
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "/\n");
 				else
-					System.out.println(listado[i].length() + "bytes  " + fechaMod.format(listado[i].lastModified())
-							+ "   " + listado[i].getName());
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "\n");
 			}
 		}
 	}
