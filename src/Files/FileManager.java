@@ -169,13 +169,29 @@ public class FileManager {
 		} else {
 			for (int i = 0; i < listado.length; i++) {
 				if (listado[i].isDirectory())
-					System.out.println(listado[i].length() + "bytes,  " + fechaMod.format(listado[i].lastModified())
-							+ "   " + listado[i].getName() + "/");
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "/\n");
 				else
-					System.out.println(listado[i].length() + "bytes  " + fechaMod.format(listado[i].lastModified())
-							+ "   " + listado[i].getName());
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "\n");
 			}
 		}
+	}
+
+	public static void mv(String arg, String arg1) throws Exception {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		if (!arg1.startsWith("/")) {
+			arg1 = relToAbs(arg1);
+		}
+		File a = new File(arg);
+		File b = new File(arg1);
+		if (!b.exists()) {
+			a.renameTo(b);
+		} else
+			throw new Exception();
+
 	}
 
 	public static String relToAbs(String relPath) {

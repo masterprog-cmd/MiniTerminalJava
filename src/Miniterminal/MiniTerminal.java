@@ -96,7 +96,11 @@ public class MiniTerminal {
 				break;
 			case "mv":
 				if (command.length >= 2) {
-					// FileManager.mv(command[1], command[2]);
+					try {
+						FileManager.mv(command[1], command[2]);
+					} catch (Exception e) {
+						System.out.println("[MiniTerminal] The file/directory already exists.");
+					}
 				} else
 					System.out.println("[MiniTerminal] Expected almost two arguments");
 				break;
