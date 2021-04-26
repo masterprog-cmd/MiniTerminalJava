@@ -101,6 +101,8 @@ public class MiniTerminal {
 				System.out.println("Quitting...");
 				System.exit(0);
 				break;
+			case "":
+				break;
 			default:
 				System.out.println("[MiniTerminal] No such command. Try 'help' to see the avaliable commands.");
 				break;
