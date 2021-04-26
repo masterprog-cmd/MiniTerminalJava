@@ -27,14 +27,14 @@ public class MiniTerminal {
 				System.out.println(wd);
 				break;
 			case "cd":
-				if (command.length >= 1) {
+				if (command.length > 1) {
 					try {
 						FileManager.cd(command[1]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
 				} else
-					System.out.println("[MiniTerminal] Expected almost one arguments");
+					FileManager.cd();
 				break;
 			case "ls":
 				if (command.length > 1) {
@@ -111,6 +111,7 @@ public class MiniTerminal {
 	}
 
 	private static String prompt() {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(System.in);
 		printPrompt();
 		String command = in.nextLine();
@@ -167,12 +168,12 @@ public class MiniTerminal {
 
 	private static void printPrompt() {
 		if (wd.getAbsolutePath() == System.getProperty("user.home"))
-			System.out.print("⁂ " + user + "@" + systemName + " ϟ ~ ➲ ");
+			System.out.print("⁂  " + user + "@" + systemName + " ϟ ~ ➲ ");
 		else if (wd.getAbsolutePath().startsWith(System.getProperty("user.home"))) {
-			String finalPath = wd.getAbsolutePath().replace(System.getProperty("user.home"), "~/");
-			System.out.print("⁂ " + user + "@" + systemName + " ϟ " + finalPath + " ➲ ");
+			String finalPath = wd.getAbsolutePath().replace(System.getProperty("user.home"), "~");
+			System.out.print("⁂  " + user + "@" + systemName + " ϟ " + finalPath + " ➲ ");
 		} else
-			System.out.print("⁂ " + user + "@" + systemName + " ϟ " + wd + " ➲ ");
+			System.out.print("⁂  " + user + "@" + systemName + " ϟ " + wd + " ➲ ");
 	}
 
 	private static void printWelcome() {

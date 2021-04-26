@@ -28,6 +28,9 @@ public class FileManager {
 	}
 
 	public static boolean mkdir(String arg) throws Exception {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
 		File a = new File(arg);
 		if (!a.getParentFile().exists()) {
 			throw new Exception();
@@ -35,17 +38,24 @@ public class FileManager {
 		if (!a.exists()) {
 			if (a.mkdirs())
 				return true;
+			else
+				System.out.println("[MiniTerminal] An error occurred creating the directory.");
 		} else
-			System.out.println("Directory doesn't created");
+			System.out.println("[MiniTerminal] Directory already exists.");
 		return false;
 	}
 
-	public static boolean rm(String path) throws FileNotFoundException {
-		File rm = new File(path);
-		if (!rm.exists())
+	public static boolean rm(String arg) throws FileNotFoundException {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File a = new File(arg);
+		if (!a.exists()) {
+			System.out.println(a.getAbsolutePath());
 			throw new FileNotFoundException();
-		if (rm.isDirectory()) {
-			for (File mirar : rm.listFiles()) {
+		}
+		if (a.isDirectory()) {
+			for (File mirar : a.listFiles()) {
 				if (mirar.isDirectory()) {
 					for (File eliminar : mirar.listFiles()) {
 						eliminar.delete();
@@ -54,7 +64,7 @@ public class FileManager {
 				mirar.delete();
 			}
 		}
-		rm.delete();
+		a.delete();
 
 		return true;
 	}
