@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import Miniterminal.MiniTerminal;
+import MiniTerminal.MiniTerminal;
 
 public class FileManager {
 

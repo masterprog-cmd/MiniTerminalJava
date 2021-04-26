@@ -1,9 +1,10 @@
-package Miniterminal;
+package MiniTerminal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import EjerciciosProg.EjProg;
 import Files.FileManager;
 
 public class MiniTerminal {
@@ -117,6 +118,9 @@ public class MiniTerminal {
 				break;
 			case "":
 				break;
+			case "ej":
+				menuEj();
+				break;
 			default:
 				System.out.println("[MiniTerminal] No such command. Try 'help' to see the avaliable commands.");
 				break;
@@ -209,6 +213,39 @@ public class MiniTerminal {
 
 	private static void printPathNotFound() {
 		System.out.println("[MiniTermnal] The path does not exist.");
+	}
+
+	private static void menuEj() {
+		Scanner teclado = new Scanner(System.in);
+		int resp;
+		do {
+			System.out.println(
+					"Que ejercicio quieres ejecutar?" + "\n-1.Salir.\n1.Crear archivo de texto en el escritorio con los"
+							+ "\nnumeros pares de la serie Fibonacci.\n2.Astros.\n3.Palindromos"
+							+ "\n4.Muestra el máximo y el mínimo de los núm añadidos.");
+			resp = teclado.nextInt();
+			switch (resp) {
+			case -1:
+				System.exit(0);
+			case 1:
+				try {
+					EjProg.Fibonacci();
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				break;
+			case 2:
+
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			default:
+				System.out.println("Introduce un número del 1 al 4.");
+				break;
+			}
+		} while (resp != -1);
 	}
 
 	private static void clearScreen() {
