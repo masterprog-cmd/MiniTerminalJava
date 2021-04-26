@@ -1,7 +1,10 @@
 package Miniterminal;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
+
+import Files.FileManager;
 
 public class MiniTerminal {
 
@@ -24,16 +27,68 @@ public class MiniTerminal {
 				System.out.println(wd);
 				break;
 			case "cd":
+				if (command.length >= 1) {
+					try {
+						FileManager.cd(command[1]);
+					} catch (Exception e) {
+						printPathNotFound();
+					}
+				} else
+					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
 			case "ls":
+				if (command.length > 1) {
+					try {
+						FileManager.ls(command[1]);
+					} catch (Exception e) {
+						printPathNotFound();
+					}
+				} else
+					try {
+						FileManager.ls();
+					} catch (Exception e) {
+						printPathNotFound();
+					}
 				break;
 			case "ll":
+				if (command.length > 1) {
+					try {
+						FileManager.ll(command[1]);
+					} catch (Exception e) {
+						printNotFound();
+					}
+				} else
+					try {
+						FileManager.ll();
+					} catch (Exception e1) {
+						printPathNotFound();
+					}
 				break;
 			case "mkdir":
+				if (command.length >= 1) {
+					try {
+						FileManager.mkdir(command[1]);
+					} catch (Exception e) {
+						printPathNotFound();
+					}
+				} else
+					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
 			case "rm":
+				if (command.length >= 1) {
+					try {
+						FileManager.rm(command[1]);
+					} catch (FileNotFoundException e) {
+						printNotFound();
+					}
+				} else
+					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
 			case "mv":
+				if (command.length >= 2) {
+					// FileManager.mv(command[1], command[2]);
+				} else
+					System.out.println("[MiniTerminal] Expected almost two arguments");
 				break;
 			case "help":
 				clearScreen();
@@ -73,7 +128,8 @@ public class MiniTerminal {
 					.println("[MiniTerminal HELP] Use that command to print the working directory.\n" + "Syntax: pwd");
 			break;
 		case "cd":
-			System.out.println("[MiniTerminal HELP] Use that command to change the working.\n" + "Syntax: cd [path]");
+			System.out.println(
+					"[MiniTerminal HELP] Use that command to change the working directory.\n" + "Syntax: cd [path]");
 			break;
 		case "ls":
 			System.out.println("[MiniTerminal HELP] Use that command to list the contests of a directory.\n"
@@ -125,6 +181,14 @@ public class MiniTerminal {
 				+ "| |  | || || | | || |  | |  |  __/| |   | | | | | || || | | || (_| || |\n"
 				+ "\\_|  |_/|_||_| |_||_|  \\_/   \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|\n"
 				+ "                                              type 'help' for more info");
+	}
+
+	private static void printNotFound() {
+		System.out.println("[MiniTermnal] The file does not exist.");
+	}
+
+	private static void printPathNotFound() {
+		System.out.println("[MiniTermnal] The path does not exist.");
 	}
 
 	private static void clearScreen() {

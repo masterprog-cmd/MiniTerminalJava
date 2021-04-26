@@ -1,5 +1,4 @@
-package Fitxers;
-import java.io.*;
+package Files;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,47 +17,53 @@ public class FileManager {
 		if (!arg.startsWith("/")) {
 			arg = relToAbs(arg);
 		}
-		// Absolute
 		File dir = new File(arg);
+		if (!dir.exists()) {
+			throw new Exception();
+		}
 		if (dir.exists())
 			MiniTerminal.setWd(dir);
 		else
 			throw new Exception("The directory does not exist.");
 	}
 
-	public static boolean mkdir(String arg) {
+	public static boolean mkdir(String arg) throws Exception {
 		File a = new File(arg);
+		if (!a.getParentFile().exists()) {
+			throw new Exception();
+		}
 		if (!a.exists()) {
 			if (a.mkdirs())
-				System.out.println("Directory created.");
-			return true;
+				return true;
 		} else
 			System.out.println("Directory doesn't created");
 		return false;
 	}
 
-	public static boolean rmArch(String path) throws FileNotFoundException {
+	public static boolean rm(String path) throws FileNotFoundException {
 		File rm = new File(path);
 		if (!rm.exists())
-			throw new FileNotFoundException("The directory entered doesn't exist.");
-
+			throw new FileNotFoundException();
 		if (rm.isDirectory()) {
 			for (File mirar : rm.listFiles()) {
 				if (mirar.isDirectory()) {
 					for (File eliminar : mirar.listFiles()) {
-						eliminar.delete();// Borra los archivos que haya dentro de mirar.
+						eliminar.delete();
 					}
 				}
-				mirar.delete();// Borra los "hijos" de a.
+				mirar.delete();
 			}
 		}
-		rm.delete();// Borra el directorio en sí
+		rm.delete();
 
 		return true;
 	}
 
-	public static void ls() {
+	public static void ls() throws Exception {
 		File[] listado = MiniTerminal.getWd().listFiles();
+		if (!MiniTerminal.getWd().exists()) {
+			throw new Exception();
+		}
 		Arrays.sort(listado);
 		if (listado == null || listado.length == 0) {
 			System.out.println("Sorry, but this directory/file is empty.");
@@ -73,11 +78,14 @@ public class FileManager {
 		}
 	}
 
-	public static void ls(String arg) {
+	public static void ls(String arg) throws Exception {
 		if (!arg.startsWith("/")) {
 			arg = relToAbs(arg);
 		}
 		File a = new File(arg);
+		if (!a.exists()) {
+			throw new Exception();
+		}
 		File[] listado = a.listFiles();
 		Arrays.sort(listado);
 		if (listado == null || listado.length == 0) {
@@ -93,8 +101,11 @@ public class FileManager {
 		}
 	}
 
-	public static void ll() {
-		File a = new File(System.getProperty("user.home"));
+	public static void ll() throws Exception {
+		File a = MiniTerminal.getWd();
+		if (!a.exists()) {
+			throw new Exception();
+		}
 		SimpleDateFormat fechaMod = new SimpleDateFormat();
 		File[] listado = a.listFiles();
 		Arrays.sort(listado);
@@ -120,7 +131,7 @@ public class FileManager {
 		File a = new File(arg);
 		SimpleDateFormat fechaMod = new SimpleDateFormat();
 		if (!a.exists()) {
-			throw new Exception("No such file or directory.");
+			throw new Exception();
 		}
 		File[] listado = a.listFiles();
 		Arrays.sort(listado);
