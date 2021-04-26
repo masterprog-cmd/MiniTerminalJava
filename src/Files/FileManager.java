@@ -45,6 +45,24 @@ public class FileManager {
 		return false;
 	}
 
+	public static boolean touch(String arg) throws Exception {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File a = new File(arg);
+		if (!a.getParentFile().exists()) {
+			throw new Exception();
+		}
+		if (!a.exists()) {
+			if (a.createNewFile())
+				return true;
+			else
+				System.out.println("[MiniTerminal] An error occurred creating the file.");
+		} else
+			System.out.println("[MiniTerminal] File already exists.");
+		return false;
+	}
+
 	public static boolean rm(String arg) throws FileNotFoundException {
 		if (!arg.startsWith("/")) {
 			arg = relToAbs(arg);

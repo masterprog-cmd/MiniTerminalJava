@@ -74,6 +74,16 @@ public class MiniTerminal {
 				} else
 					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
+			case "touch":
+				if (command.length >= 1) {
+					try {
+						FileManager.touch(command[1]);
+					} catch (Exception e) {
+						printPathNotFound();
+					}
+				} else
+					System.out.println("[MiniTerminal] Expected almost one arguments");
+				break;
 			case "rm":
 				if (command.length >= 1) {
 					try {
@@ -120,8 +130,8 @@ public class MiniTerminal {
 
 	private static void printHelp() {
 		System.out.println("Welcome to the help!\n" + "Use: 'help [command]' for specific info of a command\n"
-				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "rm\n" + "mv\n" + "help\n"
-				+ "exit");
+				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "rm\n" + "mv\n"
+				+ "help\n" + "exit");
 	}
 
 	private static void printHelp(String arg) {
@@ -145,6 +155,9 @@ public class MiniTerminal {
 			break;
 		case "mkdir":
 			System.out.println("[MiniTerminal HELP] Use that command to make a directory.\n" + "Syntax: mkdir <path>");
+			break;
+		case "touch":
+			System.out.println("[MiniTerminal HELP] Use that command to make a file.\n" + "Syntax: touch <path>");
 			break;
 		case "rm":
 			System.out.println(
