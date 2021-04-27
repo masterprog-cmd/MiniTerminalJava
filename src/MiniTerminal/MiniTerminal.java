@@ -222,11 +222,12 @@ public class MiniTerminal {
 			System.out.println(
 					"Que ejercicio quieres ejecutar?" + "\n-1.Salir.\n1.Crear archivo de texto en el escritorio con los"
 							+ "\nnumeros pares de la serie Fibonacci.\n2.Astros.\n3.Palindromos"
-							+ "\n4.Muestra el máximo y el mínimo de los núm añadidos.");
+							+ "\n4.Muestra el máximo y el mínimo de los núm añadidos.\n[-1 para salir]");
 			resp = teclado.nextInt();
+			teclado.nextLine();
 			switch (resp) {
 			case -1:
-				System.exit(0);
+				break;
 			case 1:
 				try {
 					EjProg.Fibonacci();
@@ -235,11 +236,25 @@ public class MiniTerminal {
 				}
 				break;
 			case 2:
-
+				ej.ejecucion.main(null);
 				break;
 			case 3:
+				try {
+					System.out.println("Introduce una frase: ");
+					String frase = teclado.nextLine();
+					EjProg.palindromo(frase);
+				} catch (Exception e) {
+					System.out.println(e);
+				}
 				break;
 			case 4:
+				Scanner in = new Scanner(System.in);
+				System.out.println("Introduce un numero: ");
+				int arg = in.nextInt();
+				System.out.println("Introduce otr numero: ");
+				int arg1 = in.nextInt();
+
+				EjProg.MaxyMin(arg, arg1);
 				break;
 			default:
 				System.out.println("Introduce un número del 1 al 4.");
