@@ -1,7 +1,9 @@
 package Files;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
@@ -61,6 +63,23 @@ public class FileManager {
 		} else
 			System.out.println("[MiniTerminal] File already exists.");
 		return false;
+	}
+
+	public static void cat(String arg) throws Exception {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File a = new File(arg);
+		if (!a.exists()) {
+			throw new Exception();
+		} else {
+			try (BufferedReader br = new BufferedReader(new FileReader(a))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+				}
+			}
+		}
 	}
 
 	public static boolean rm(String arg) throws FileNotFoundException {
@@ -141,6 +160,8 @@ public class FileManager {
 			System.out.println("Sorry, but this directory/file is empty.");
 			return;
 		} else {
+			System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
+			System.out.println();
 			for (int i = 0; i < listado.length; i++) {
 				if (listado[i].isDirectory())
 					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
@@ -153,11 +174,11 @@ public class FileManager {
 	}
 
 	public static void ll(String arg) throws Exception {
+		SimpleDateFormat fechaMod = new SimpleDateFormat();
 		if (!arg.startsWith("/")) {
 			arg = relToAbs(arg);
 		}
 		File a = new File(arg);
-		SimpleDateFormat fechaMod = new SimpleDateFormat();
 		if (!a.exists()) {
 			throw new Exception();
 		}
@@ -167,6 +188,8 @@ public class FileManager {
 			System.out.println("Sorry, but this directory/file is empty.");
 			return;
 		} else {
+			System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
+			System.out.println();
 			for (int i = 0; i < listado.length; i++) {
 				if (listado[i].isDirectory())
 					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
@@ -191,7 +214,34 @@ public class FileManager {
 			a.renameTo(b);
 		} else
 			throw new Exception();
+	}
 
+	public static void find(String arg) {
+		SimpleDateFormat fechaMod = new SimpleDateFormat();
+		boolean find = false;
+		String argBasic = arg;
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File a = new File(arg).getParentFile();
+		File[] listado = a.listFiles();
+		Arrays.sort(listado);
+		System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
+		System.out.println();
+		for (int i = 0; i < listado.length; i++) {
+			if (listado[i].getName().equals(argBasic)) {
+				if (listado[i].isDirectory())
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "/\n");
+				else
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "\n");
+				find = true;
+			}
+		}
+		if (!find) {
+			System.out.println("[MiniTerminal] No results were found with this criterion.");
+		}
 	}
 
 	public static String relToAbs(String relPath) {
