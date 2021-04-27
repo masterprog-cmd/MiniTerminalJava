@@ -22,7 +22,7 @@ public class MiniTerminal {
 		printWelcome();
 		while (isRunning) {
 			String[] command = prompt().split(" ");
-			switch (command[0]) {
+			switch (command[0].toLowerCase()) {
 			case "pwd":
 				System.out.println(wd);
 				break;
@@ -84,6 +84,15 @@ public class MiniTerminal {
 				} else
 					System.out.println("[MiniTerminal] Expected almost one argument.");
 				break;
+			case "echo":
+				if (command.length > 1) {
+					String concat = "";
+					for (int i = 1; i < command.length; i++) {
+						concat = concat + " " + command[i];
+					}
+					System.out.println(concat);
+				}
+				break;
 			case "cat":
 				if (command.length >= 1) {
 					try {
@@ -120,6 +129,9 @@ public class MiniTerminal {
 				} else
 					System.out.println("[MiniTerminal] Expected almost one argument");
 				break;
+			case "clear":
+				clearScreen();
+				break;
 			case "help":
 				clearScreen();
 				if (command.length > 1)
@@ -150,8 +162,8 @@ public class MiniTerminal {
 
 	private static void printHelp() {
 		System.out.println("Welcome to the help!\n" + "Use: 'help [command]' for specific info of a command\n"
-				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "cat\n"
-				+ "rm\n" + "mv\n" + "find\n" + "help\n" + "exit");
+				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "echo\n"
+				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "clear\n" + "help\n" + "exit");
 	}
 
 	private static void printHelp(String arg) {
@@ -179,6 +191,9 @@ public class MiniTerminal {
 		case "touch":
 			System.out.println("[MiniTerminal HELP] Use that command to make a file.\n" + "Syntax: touch <file>");
 			break;
+		case "echo":
+			System.out.println("[MiniTerminal HELP] Use that command to print something.\n" + "Syntax: echo <text>");
+			break;
 		case "cat":
 			System.out.println(
 					"[MiniTerminal HELP] Use that command to see the content of a file.\n" + "Syntax: cat <file>");
@@ -193,6 +208,9 @@ public class MiniTerminal {
 			break;
 		case "find":
 			System.out.println("[MiniTerminal HELP] Use that command to search a file.\n" + "Syntax: find <search>");
+			break;
+		case "clear":
+			System.out.println("[MiniTerminal HELP] Use that command to clear console.\n" + "Syntax: clear");
 			break;
 		case "help":
 			System.out.println("[MiniTerminal HELP] Use that command to show this help.\n" + "Syntax: help [command]");
