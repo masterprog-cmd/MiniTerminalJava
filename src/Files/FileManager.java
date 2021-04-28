@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
+import Miniterminal.Colorize;
 import Miniterminal.MiniTerminal;
 
 public class FileManager {
@@ -26,7 +27,7 @@ public class FileManager {
 		if (dir.exists())
 			MiniTerminal.setWd(dir);
 		else
-			throw new Exception("The directory does not exist.");
+			throw new Exception();
 	}
 
 	public static boolean mkdir(String arg) throws Exception {
@@ -41,9 +42,10 @@ public class FileManager {
 			if (a.mkdirs())
 				return true;
 			else
-				System.out.println("[MiniTerminal] An error occurred creating the directory.");
+				System.out.println(
+						MiniTerminal.errPrefix + "An error occurred creating the directory." + Colorize.ANSI_RESET);
 		} else
-			System.out.println("[MiniTerminal] Directory already exists.");
+			System.out.println(MiniTerminal.errPrefix + "Directory already exists." + Colorize.ANSI_RESET);
 		return false;
 	}
 
@@ -59,9 +61,10 @@ public class FileManager {
 			if (a.createNewFile())
 				return true;
 			else
-				System.out.println("[MiniTerminal] An error occurred creating the file.");
+				System.out
+						.println(MiniTerminal.errPrefix + "An error occurred creating the file." + Colorize.ANSI_RESET);
 		} else
-			System.out.println("[MiniTerminal] File already exists.");
+			System.out.println(MiniTerminal.errPrefix + "File already exists." + Colorize.ANSI_RESET);
 		return false;
 	}
 
@@ -113,7 +116,7 @@ public class FileManager {
 		}
 		Arrays.sort(listado);
 		if (listado == null || listado.length == 0) {
-			System.out.println("Sorry, but this directory/file is empty.");
+			System.out.println(MiniTerminal.prefix + "Sorry, but this directory is empty.");
 			return;
 		} else {
 			for (int i = 0; i < listado.length; i++) {
@@ -136,7 +139,7 @@ public class FileManager {
 		File[] listado = a.listFiles();
 		Arrays.sort(listado);
 		if (listado == null || listado.length == 0) {
-			System.out.println("Sorry, but this directory/file is empty.");
+			System.out.println(MiniTerminal.prefix + "Sorry, but this directory is empty.");
 			return;
 		} else {
 			for (int i = 0; i < listado.length; i++) {
@@ -157,7 +160,7 @@ public class FileManager {
 		File[] listado = a.listFiles();
 		Arrays.sort(listado);
 		if (listado == null || listado.length == 0) {
-			System.out.println("Sorry, but this directory/file is empty.");
+			System.out.println(MiniTerminal.prefix + "Sorry, but this directory is empty.");
 			return;
 		} else {
 			System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
@@ -185,7 +188,7 @@ public class FileManager {
 		File[] listado = a.listFiles();
 		Arrays.sort(listado);
 		if (listado == null || listado.length == 0) {
-			System.out.println("Sorry, but this directory/file is empty.");
+			System.out.println(MiniTerminal.prefix + "Sorry, but this directory is empty.");
 			return;
 		} else {
 			System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
@@ -240,7 +243,7 @@ public class FileManager {
 			}
 		}
 		if (!find) {
-			System.out.println("[MiniTerminal] No results were found with this criterion.");
+			System.out.println(MiniTerminal.prefix + "No results were found with this criterion.");
 		}
 	}
 
