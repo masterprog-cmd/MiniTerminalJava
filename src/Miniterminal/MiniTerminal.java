@@ -13,25 +13,16 @@ public class MiniTerminal {
 	protected static String user = System.getProperty("user.name");
 	protected static File wd = new File(System.getProperty("user.home"));
 
-	public static String prefix = "[" + Colorize.ANSI_WHITE + "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal"
-			+ Colorize.ANSI_RESET + "] ";
-	public static String errPrefix = Colorize.ANSI_RED + "[!] " + Colorize.ANSI_RESET + "[" + Colorize.ANSI_WHITE
-			+ "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal" + Colorize.ANSI_RESET + "] " + Colorize.ANSI_RED;
-	public static String helpPrefix = Colorize.ANSI_BRIGHT_YELLOW + "[HELP] " + Colorize.ANSI_RESET + "["
-			+ Colorize.ANSI_WHITE + "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal" + Colorize.ANSI_RESET + "] "
-			+ Colorize.ANSI_BRIGHT_YELLOW;
-
 	public static void main(String[] args) {
-		if (user.equals("root")) {
-			System.out.println(
-					errPrefix + "No puedes ejecutar esta aplicación con el usuario ROOT" + Colorize.ANSI_RESET);
+		if (user == "root") {
+			System.out.println("No puedes ejecutar esta aplicación con el usuario ROOT");
 			System.exit(1);
 		}
 		clearScreen();
 		printWelcome();
 		while (isRunning) {
 			String[] command = prompt().split(" ");
-			switch (command[0].toLowerCase()) {
+			switch (command[0]) {
 			case "pwd":
 				System.out.println(wd);
 				break;
@@ -81,7 +72,7 @@ public class MiniTerminal {
 						printPathNotFound();
 					}
 				} else
-					System.out.println(prefix + "Expected almost one arguments");
+					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
 			case "touch":
 				if (command.length >= 1) {
@@ -91,26 +82,7 @@ public class MiniTerminal {
 						printPathNotFound();
 					}
 				} else
-					System.out.println(prefix + "Expected almost one argument.");
-				break;
-			case "echo":
-				if (command.length > 1) {
-					String concat = "";
-					for (int i = 1; i < command.length; i++) {
-						concat = concat + " " + command[i];
-					}
-					System.out.println(concat);
-				}
-				break;
-			case "cat":
-				if (command.length >= 1) {
-					try {
-						FileManager.cat(command[1]);
-					} catch (Exception e) {
-						printPathNotFound();
-					}
-				} else
-					System.out.println(prefix + "Expected almost one argument.");
+					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
 			case "rm":
 				if (command.length >= 1) {
@@ -120,34 +92,24 @@ public class MiniTerminal {
 						printNotFound();
 					}
 				} else
-					System.out.println(prefix + "Expected almost one argument.");
+					System.out.println("[MiniTerminal] Expected almost one arguments");
 				break;
 			case "mv":
 				if (command.length >= 2) {
 					try {
 						FileManager.mv(command[1], command[2]);
 					} catch (Exception e) {
-						System.out.println(
-								errPrefix + "[MiniTerminal] The file/directory already exists." + Colorize.ANSI_RESET);
+						System.out.println("[MiniTerminal] The file/directory already exists.");
 					}
 				} else
-					System.out.println(prefix + "Expected almost two arguments.");
-				break;
-			case "find":
-				if (command.length > 1) {
-					FileManager.find(command[1]);
-				} else
-					System.out.println(prefix + "Expected almost one argument");
-				break;
-			case "clear":
-				clearScreen();
+					System.out.println("[MiniTerminal] Expected almost two arguments");
 				break;
 			case "help":
+				clearScreen();
 				if (command.length > 1)
 					printHelp(command[1]);
 				else
-					clearScreen();
-				printHelp();
+					printHelp();
 				break;
 			case "exit":
 				System.out.println("Quitting...");
@@ -156,8 +118,7 @@ public class MiniTerminal {
 			case "":
 				break;
 			default:
-				System.out.println(
-						errPrefix + "No such command. Try 'help' to see the avaliable commands." + Colorize.ANSI_RESET);
+				System.out.println("[MiniTerminal] No such command. Try 'help' to see the avaliable commands.");
 				break;
 			}
 		}
@@ -172,110 +133,82 @@ public class MiniTerminal {
 	}
 
 	private static void printHelp() {
-		System.out.println(Colorize.ANSI_BRIGHT_YELLOW + " __    __   _______  __      .______   \n"
-				+ "|  |  |  | |   ____||  |     |   _  \\  \n" + "|  |__|  | |  |__   |  |     |  |_)  | \n"
-				+ "|   __   | |   __|  |  |     |   ___/  \n" + "|  |  |  | |  |____ |  `----.|  |      \n"
-				+ "|__|  |__| |_______||_______|| _|      ");
-		System.out.println("\nWelcome to the help! Use: 'help [command]' for specific info of a command\n"
-				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "echo\n"
-				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "clear\n" + "help\n" + "exit" + Colorize.ANSI_RESET);
+		System.out.println("Welcome to the help!\n" + "Use: 'help [command]' for specific info of a command\n"
+				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "rm\n" + "mv\n"
+				+ "help\n" + "exit");
 	}
 
 	private static void printHelp(String arg) {
 		switch (arg) {
 		case "pwd":
-			System.out.println(helpPrefix + "Use that command to print the working directory.\n" + "Syntax: pwd"
-					+ Colorize.ANSI_RESET);
+			System.out
+					.println("[MiniTerminal HELP] Use that command to print the working directory.\n" + "Syntax: pwd");
 			break;
 		case "cd":
-			System.out.println(helpPrefix + "Use that command to change the working directory.\n" + "Syntax: cd [path]"
-					+ Colorize.ANSI_RESET);
+			System.out.println(
+					"[MiniTerminal HELP] Use that command to change the working directory.\n" + "Syntax: cd [path]");
 			break;
 		case "ls":
-			System.out.println(helpPrefix + "Use that command to list the contests of a directory.\n"
-					+ "Syntax: ls [path]" + Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] Use that command to list the contests of a directory.\n"
+					+ "Syntax: ls [path]");
 			break;
 		case "ll":
-			System.out.println(helpPrefix + "Use that command to list the contents of a directory with more info.\n"
-					+ "Syntax: ll [path]" + Colorize.ANSI_RESET);
+			System.out.println(
+					"[MiniTerminal HELP] Use that command to list the contents of a directory with more info.\n"
+							+ "Syntax: ll [path]");
 			break;
 		case "mkdir":
-			System.out.println(helpPrefix + "Use that command to make a directory.\n" + "Syntax: mkdir <path>"
-					+ Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] Use that command to make a directory.\n" + "Syntax: mkdir <path>");
 			break;
 		case "touch":
-			System.out.println(
-					helpPrefix + "[Use that command to make a file.\n" + "Syntax: touch <file>" + Colorize.ANSI_RESET);
-			break;
-		case "echo":
-			System.out.println(helpPrefix + "Use that command to print something.\n" + "Syntax: echo <text>"
-					+ Colorize.ANSI_RESET);
-			break;
-		case "cat":
-			System.out.println(helpPrefix + "Use that command to see the content of a file.\n" + "Syntax: cat <file>"
-					+ Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] Use that command to make a file.\n" + "Syntax: touch <path>");
 			break;
 		case "rm":
-			System.out.println(helpPrefix + "Use that command to remove a file or a directory.\n" + "Syntax: rm <path>"
-					+ Colorize.ANSI_RESET);
+			System.out.println(
+					"[MiniTerminal HELP] Use that command to remove a file or a directory.\n" + "Syntax: rm <path>");
 			break;
 		case "mv":
-			System.out.println(helpPrefix + "Use that command to move a file across directories or rename it.\n"
-					+ "Syntax: mv <path> <path>" + Colorize.ANSI_RESET);
-			break;
-		case "find":
-			System.out.println(helpPrefix + "Use that command to search a file.\n" + "Syntax: find <search>"
-					+ Colorize.ANSI_RESET);
-			break;
-		case "clear":
-			System.out.println(
-					helpPrefix + "Use that command to clear console.\n" + "Syntax: clear" + Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] Use that command to move a file across directories or rename it.\n"
+					+ "Syntax: mv <path> <path>");
 			break;
 		case "help":
-			System.out.println(helpPrefix + "Use that command to show this help.\n" + "Syntax: help [command]"
-					+ Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] Use that command to show this help.\n" + "Syntax: help [command]");
 			break;
 		case "exit":
-			System.out.println(
-					helpPrefix + "Use that command to terminate the program.\n" + "Syntax: exit" + Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] Use that command to terminate the program.\n" + "Syntax: exit");
 			break;
 		default:
-			System.out.println(
-					errPrefix + "No such command. Try 'help' to see the avaliable commands." + Colorize.ANSI_RESET);
+			System.out.println("[MiniTerminal HELP] No such command. Try 'help' to see the avaliable commands.");
 			break;
 		}
 	}
 
 	private static void printPrompt() {
 		if (wd.getAbsolutePath() == System.getProperty("user.home"))
-			System.out.print(Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ "
-					+ Colorize.ANSI_BRIGHT_BLUE + "~" + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET);
+			System.out.print("⁂  " + user + "@" + systemName + " ϟ ~ ➲ ");
 		else if (wd.getAbsolutePath().startsWith(System.getProperty("user.home"))) {
 			String finalPath = wd.getAbsolutePath().replace(System.getProperty("user.home"), "~");
-			System.out.print(Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ "
-					+ Colorize.ANSI_BRIGHT_BLUE + finalPath + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET);
+			System.out.print("⁂  " + user + "@" + systemName + " ϟ " + finalPath + " ➲ ");
 		} else
-			System.out.print(Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ "
-					+ Colorize.ANSI_BRIGHT_BLUE + wd + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET);
+			System.out.print("⁂  " + user + "@" + systemName + " ϟ " + wd + " ➲ ");
 	}
 
 	private static void printWelcome() {
-		System.out.println(Colorize.ANSI_PURPLE
-				+ "___  ___ _         _  _____                         _                _ \n"
+		System.out.println("___  ___ _         _  _____                         _                _ \n"
 				+ "|  \\/  |(_)       (_)|_   _|                       (_)              | |\n"
 				+ "| .  . | _  _ __   _   | |    ___  _ __  _ __ ___   _  _ __    __ _ | |\n"
 				+ "| |\\/| || || '_ \\ | |  | |   / _ \\| '__|| '_ ` _ \\ | || '_ \\  / _` || |\n"
 				+ "| |  | || || | | || |  | |  |  __/| |   | | | | | || || | | || (_| || |\n"
 				+ "\\_|  |_/|_||_| |_||_|  \\_/   \\___||_|   |_| |_| |_||_||_| |_| \\__,_||_|\n"
-				+ "                                              type 'help' for more info" + Colorize.ANSI_RESET);
+				+ "                                              type 'help' for more info");
 	}
 
 	private static void printNotFound() {
-		System.out.println(errPrefix + "The file does not exist." + Colorize.ANSI_RESET);
+		System.out.println("[MiniTermnal] The file does not exist.");
 	}
 
 	private static void printPathNotFound() {
-		System.out.println(errPrefix + "The path does not exist." + Colorize.ANSI_RESET);
+		System.out.println("[MiniTermnal] The path does not exist.");
 	}
 
 	private static void clearScreen() {
@@ -283,11 +216,10 @@ public class MiniTerminal {
 			if (systemName.contains("Windows")) {
 				Runtime.getRuntime().exec("cls");
 			} else {
-				System.out.print("\033[H\033[2J");
-				System.out.flush();
+				Runtime.getRuntime().exec("clear");
 			}
 		} catch (final Exception e) {
-			System.err.println(errPrefix + "clearScreen() no se ejecuto correctamente." + Colorize.ANSI_RESET);
+			System.err.println("[!] clearScreen() no se ejecuto correctamente.");
 		}
 	}
 
