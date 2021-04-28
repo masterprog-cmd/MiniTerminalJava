@@ -9,10 +9,14 @@ pwd
 cd <DIR>
 ls
 ll
+echo
 mkdir <DIR>
 touch <FILE>
 rm <FILE>
 mv <FILE1> <FILE2>
+cat <FILE>
+find <CRITERIA>
+clear
 help
 exit
 ```
