@@ -14,12 +14,13 @@ public class MiniTerminal {
 	protected static File wd = new File(System.getProperty("user.home"));
 
 	public static void main(String[] args) {
-		if (user == "root") {
+		if (user.equals("root")) {
 			System.out.println("No puedes ejecutar esta aplicación con el usuario ROOT");
 			System.exit(1);
 		}
 		clearScreen();
 		printWelcome();
+		System.out.println(user);
 		while (isRunning) {
 			String[] command = prompt().split(" ");
 			switch (command[0].toLowerCase()) {
@@ -257,7 +258,8 @@ public class MiniTerminal {
 			if (systemName.contains("Windows")) {
 				Runtime.getRuntime().exec("cls");
 			} else {
-				Runtime.getRuntime().exec("clear");
+				System.out.print("\033[H\033[2J");
+				System.out.flush();
 			}
 		} catch (final Exception e) {
 			System.err.println("[!] clearScreen() no se ejecuto correctamente.");
