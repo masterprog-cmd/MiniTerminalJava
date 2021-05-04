@@ -1,8 +1,5 @@
 package Miniterminal;
 
-import java.awt.AWTEvent;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,20 +11,6 @@ public class History {
 	public static boolean hashistory = false;
 	private static File history = new File(System.getProperty("user.home") + ".minihistory");
     private static ArrayList<String> historyList = new ArrayList<String>();
-
-	
-    public History() {
-        Toolkit defaultTookKit = Toolkit.getDefaultToolkit();
-        defaultTookKit.addAWTEventListener(new AWTEventListener() {
-              @Override
-			public void eventDispatched(AWTEvent event) {
-                    System.out.println("HELLO");
-              }
-        }, AWTEvent.KEY_EVENT_MASK);
-        
-        AWTEventListener[] listeners = defaultTookKit.getAWTEventListeners();
-        System.out.println(listeners.length + " test");
-  }
     
 	public static void checkHistory() throws IOException {
 		if (System.getProperty("os.name").contains("Windows")) {

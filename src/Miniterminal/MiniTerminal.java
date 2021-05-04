@@ -1,9 +1,10 @@
 package Miniterminal;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
+import java.io.InputStreamReader;
 
 import Files.FileManager;
 
@@ -21,6 +22,9 @@ public class MiniTerminal {
 	public static String helpPrefix = Colorize.ANSI_BRIGHT_YELLOW + "[HELP] " + Colorize.ANSI_RESET + "["
 			+ Colorize.ANSI_WHITE + "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal" + Colorize.ANSI_RESET + "] "
 			+ Colorize.ANSI_BRIGHT_YELLOW;
+	
+    private static final String UP_ARROW_1 = new String(new byte[] {91, 65});
+    private static final String UP_ARROW_2 = new String(new byte[] {27, 91, 65});   
 
 	public static void main(String[] args) {
 		if (user.equals("root")) {
@@ -30,7 +34,6 @@ public class MiniTerminal {
 		}
 		clearScreen();
 		printWelcome();
-		new History();
 		try {
 			History.checkHistory();
 		} catch (IOException e2) {
@@ -38,7 +41,11 @@ public class MiniTerminal {
 		}
 		while (isRunning) {
 			String[] command = prompt().split(" ");
-			System.out.println();
+			if (command[0].startsWith(UP_ARROW_1) || command[0].startsWith(UP_ARROW_2)) {
+                continue;
+			} else {
+				
+			}
 			switch (command[0].toLowerCase()) {
 			case "pwd":
 				pushHistory(command);
@@ -187,9 +194,14 @@ public class MiniTerminal {
 
 	private static String prompt() {
 		@SuppressWarnings("resource")
-		Scanner in = new Scanner(System.in);
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		printPrompt();
-		String command = in.nextLine();
+		String command = null;
+		try {
+			command = in.readLine();
+		} catch (IOException e) {
+			System.out.println(errPrefix + "A error ocurred reading the command, please try again...s" + Colorize.ANSI_RESET);
+		}
 		return command;
 	}
 	
