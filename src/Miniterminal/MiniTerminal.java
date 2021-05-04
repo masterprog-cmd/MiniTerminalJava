@@ -2,6 +2,7 @@ package Miniterminal;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import Files.FileManager;
@@ -29,13 +30,22 @@ public class MiniTerminal {
 		}
 		clearScreen();
 		printWelcome();
+		new History();
+		try {
+			History.checkHistory();
+		} catch (IOException e2) {
+	        System.out.println(MiniTerminal.errPrefix + "An error occurred loading the historial." + Colorize.ANSI_RESET);
+		}
 		while (isRunning) {
 			String[] command = prompt().split(" ");
+			System.out.println();
 			switch (command[0].toLowerCase()) {
 			case "pwd":
+				pushHistory(command);
 				System.out.println(wd);
 				break;
 			case "cd":
+				pushHistory(command);
 				if (command.length > 1) {
 					try {
 						FileManager.cd(command[1]);
@@ -46,6 +56,7 @@ public class MiniTerminal {
 					FileManager.cd();
 				break;
 			case "ls":
+				pushHistory(command);
 				if (command.length > 1) {
 					try {
 						FileManager.ls(command[1]);
@@ -60,6 +71,7 @@ public class MiniTerminal {
 					}
 				break;
 			case "ll":
+				pushHistory(command);
 				if (command.length > 1) {
 					try {
 						FileManager.ll(command[1]);
@@ -74,6 +86,7 @@ public class MiniTerminal {
 					}
 				break;
 			case "mkdir":
+				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.mkdir(command[1]);
@@ -84,6 +97,7 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one arguments");
 				break;
 			case "touch":
+				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.touch(command[1]);
@@ -94,6 +108,7 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument.");
 				break;
 			case "echo":
+				pushHistory(command);
 				if (command.length > 1) {
 					String concat = "";
 					for (int i = 1; i < command.length; i++) {
@@ -103,6 +118,7 @@ public class MiniTerminal {
 				}
 				break;
 			case "cat":
+				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.cat(command[1]);
@@ -113,6 +129,7 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument.");
 				break;
 			case "rm":
+				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.rm(command[1]);
@@ -123,6 +140,7 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument.");
 				break;
 			case "mv":
+				pushHistory(command);
 				if (command.length >= 2) {
 					try {
 						FileManager.mv(command[1], command[2]);
@@ -134,15 +152,18 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost two arguments.");
 				break;
 			case "find":
+				pushHistory(command);
 				if (command.length > 1) {
 					FileManager.find(command[1]);
 				} else
 					System.out.println(prefix + "Expected almost one argument");
 				break;
 			case "clear":
+				pushHistory(command);
 				clearScreen();
 				break;
 			case "help":
+				pushHistory(command);
 				if (command.length > 1)
 					printHelp(command[1]);
 				else
@@ -150,6 +171,7 @@ public class MiniTerminal {
 				printHelp();
 				break;
 			case "exit":
+				pushHistory(command);
 				System.out.println("Quitting...");
 				System.exit(0);
 				break;
@@ -169,6 +191,17 @@ public class MiniTerminal {
 		printPrompt();
 		String command = in.nextLine();
 		return command;
+	}
+	
+	private static void pushHistory(String[] command) {
+		if (History.hashistory) {
+			String fullCommand = "";
+			for (int i = 0; i < command.length; i++) {
+				fullCommand = fullCommand + command[i];
+			}
+			History.addHistory(fullCommand);
+			System.out.println(fullCommand);
+		}
 	}
 
 	private static void printHelp() {
@@ -281,7 +314,9 @@ public class MiniTerminal {
 	private static void clearScreen() {
 		try {
 			if (systemName.contains("Windows")) {
-				Runtime.getRuntime().exec("cls");
+				System.out.print("\033[H\033[2J");
+				System.out.flush();
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();  
 			} else {
 				System.out.print("\033[H\033[2J");
 				System.out.flush();
