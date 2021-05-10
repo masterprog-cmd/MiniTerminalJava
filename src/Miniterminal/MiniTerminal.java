@@ -1,10 +1,31 @@
 package Miniterminal;
 
-import java.io.BufferedReader;
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.jline.builtins.Completers;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReader.Option;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.MaskingCallback;
+import org.jline.reader.Parser;
+import org.jline.reader.impl.DefaultParser;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
 
 import Files.FileManager;
 
@@ -22,37 +43,50 @@ public class MiniTerminal {
 	public static String helpPrefix = Colorize.ANSI_BRIGHT_YELLOW + "[HELP] " + Colorize.ANSI_RESET + "["
 			+ Colorize.ANSI_WHITE + "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal" + Colorize.ANSI_RESET + "] "
 			+ Colorize.ANSI_BRIGHT_YELLOW;
-	
-    private static final String UP_ARROW_1 = new String(new byte[] {91, 65});
-    private static final String UP_ARROW_2 = new String(new byte[] {27, 91, 65});   
 
-	public static void main(String[] args) {
-		if (user.equals("root")) {
+	public static void main(String[] args) throws IOException {
+		if (user.equals("root") || user.equals("Administrator")) {
 			System.out.println(
 					errPrefix + "No puedes ejecutar esta aplicación con el usuario ROOT" + Colorize.ANSI_RESET);
 			System.exit(1);
 		}
 		clearScreen();
 		printWelcome();
+		TerminalBuilder builder = TerminalBuilder.builder();
+		Completer completer = new Completers.FileNameCompleter();
+		DefaultParser p3 = new DefaultParser();
+		p3.setEscapeChars(new char[] {});
+		Parser parser = p3;
+		List<Consumer<LineReader>> callbacks = new ArrayList<>();
+		Terminal terminal = null;
 		try {
-			History.checkHistory();
+			terminal = builder.build();
 		} catch (IOException e2) {
-	        System.out.println(MiniTerminal.errPrefix + "An error occurred loading the historial." + Colorize.ANSI_RESET);
+			System.out.println(errPrefix + "An error has ocurred loading the terminal.");
+			System.exit(1);
+		}
+		LineReader reader = LineReaderBuilder.builder().terminal(terminal).completer(completer).parser(parser)
+				.variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M%P > ").variable(LineReader.INDENTATION, 2)
+				.option(Option.INSERT_BRACKET, true).build();
+		callbacks.forEach(c -> c.accept(reader));
+		if (!callbacks.isEmpty()) {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		while (isRunning) {
-			String[] command = prompt().split(" ");
-			if (command[0].startsWith(UP_ARROW_1) || command[0].startsWith(UP_ARROW_2)) {
-                continue;
-			} else {
-				
-			}
+			String line = null;
+			line = reader.readLine(printPrompt(), printPromptRight(), (MaskingCallback) null, null);
+			line = line.trim();
+			terminal.flush();
+			String[] command = line.split(" ");
 			switch (command[0].toLowerCase()) {
 			case "pwd":
-				pushHistory(command);
 				System.out.println(wd);
 				break;
 			case "cd":
-				pushHistory(command);
 				if (command.length > 1) {
 					try {
 						FileManager.cd(command[1]);
@@ -63,7 +97,6 @@ public class MiniTerminal {
 					FileManager.cd();
 				break;
 			case "ls":
-				pushHistory(command);
 				if (command.length > 1) {
 					try {
 						FileManager.ls(command[1]);
@@ -78,7 +111,6 @@ public class MiniTerminal {
 					}
 				break;
 			case "ll":
-				pushHistory(command);
 				if (command.length > 1) {
 					try {
 						FileManager.ll(command[1]);
@@ -93,7 +125,6 @@ public class MiniTerminal {
 					}
 				break;
 			case "mkdir":
-				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.mkdir(command[1]);
@@ -104,7 +135,6 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one arguments");
 				break;
 			case "touch":
-				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.touch(command[1]);
@@ -115,7 +145,6 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument.");
 				break;
 			case "echo":
-				pushHistory(command);
 				if (command.length > 1) {
 					String concat = "";
 					for (int i = 1; i < command.length; i++) {
@@ -125,7 +154,6 @@ public class MiniTerminal {
 				}
 				break;
 			case "cat":
-				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.cat(command[1]);
@@ -136,7 +164,6 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument.");
 				break;
 			case "rm":
-				pushHistory(command);
 				if (command.length >= 1) {
 					try {
 						FileManager.rm(command[1]);
@@ -147,7 +174,6 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument.");
 				break;
 			case "mv":
-				pushHistory(command);
 				if (command.length >= 2) {
 					try {
 						FileManager.mv(command[1], command[2]);
@@ -159,18 +185,15 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost two arguments.");
 				break;
 			case "find":
-				pushHistory(command);
 				if (command.length > 1) {
 					FileManager.find(command[1]);
 				} else
 					System.out.println(prefix + "Expected almost one argument");
 				break;
 			case "clear":
-				pushHistory(command);
 				clearScreen();
 				break;
 			case "help":
-				pushHistory(command);
 				if (command.length > 1)
 					printHelp(command[1]);
 				else
@@ -178,7 +201,6 @@ public class MiniTerminal {
 				printHelp();
 				break;
 			case "exit":
-				pushHistory(command);
 				System.out.println("Quitting...");
 				System.exit(0);
 				break;
@@ -189,30 +211,6 @@ public class MiniTerminal {
 						errPrefix + "No such command. Try 'help' to see the avaliable commands." + Colorize.ANSI_RESET);
 				break;
 			}
-		}
-	}
-
-	private static String prompt() {
-		@SuppressWarnings("resource")
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		printPrompt();
-		String command = null;
-		try {
-			command = in.readLine();
-		} catch (IOException e) {
-			System.out.println(errPrefix + "A error ocurred reading the command, please try again...s" + Colorize.ANSI_RESET);
-		}
-		return command;
-	}
-	
-	private static void pushHistory(String[] command) {
-		if (History.hashistory) {
-			String fullCommand = "";
-			for (int i = 0; i < command.length; i++) {
-				fullCommand = fullCommand + command[i];
-			}
-			History.addHistory(fullCommand);
-			System.out.println(fullCommand);
 		}
 	}
 
@@ -291,17 +289,29 @@ public class MiniTerminal {
 		}
 	}
 
-	private static void printPrompt() {
-		if (wd.getAbsolutePath() == System.getProperty("user.home"))
-			System.out.print(Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ "
-					+ Colorize.ANSI_BRIGHT_BLUE + "~" + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET);
-		else if (wd.getAbsolutePath().startsWith(System.getProperty("user.home"))) {
+	private static String printPrompt() {
+		String rt = "";
+		if (wd.getAbsolutePath() == System.getProperty("user.home")) {
+			rt = Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ " + Colorize.ANSI_BRIGHT_BLUE + "~"
+					+ Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET;
+		} else if (wd.getAbsolutePath().startsWith(System.getProperty("user.home"))) {
 			String finalPath = wd.getAbsolutePath().replace(System.getProperty("user.home"), "~");
-			System.out.print(Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ "
-					+ Colorize.ANSI_BRIGHT_BLUE + finalPath + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET);
+			rt = Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ " + Colorize.ANSI_BRIGHT_BLUE
+					+ finalPath + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET;
 		} else
-			System.out.print(Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ "
-					+ Colorize.ANSI_BRIGHT_BLUE + wd + Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET);
+			rt = Colorize.ANSI_BRIGHT_GREEN + "⁂  " + user + "@" + systemName + " ϟ " + Colorize.ANSI_BRIGHT_BLUE + wd
+					+ Colorize.ANSI_BRIGHT_GREEN + " ➲ " + Colorize.ANSI_RESET;
+		return rt;
+	}
+
+	private static String printPromptRight() {
+		String rightPrompt = new AttributedStringBuilder().style(AttributedStyle.DEFAULT)
+				.append(LocalDate.now().format(DateTimeFormatter.ISO_DATE)).append("\n")
+				.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN | AttributedStyle.BRIGHT))
+				.append(LocalTime.now().format(new DateTimeFormatterBuilder().appendValue(HOUR_OF_DAY, 2)
+						.appendLiteral(':').appendValue(MINUTE_OF_HOUR, 2).toFormatter()))
+				.toAnsi();
+		return rightPrompt;
 	}
 
 	private static void printWelcome() {
@@ -328,7 +338,7 @@ public class MiniTerminal {
 			if (systemName.contains("Windows")) {
 				System.out.print("\033[H\033[2J");
 				System.out.flush();
-				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();  
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 			} else {
 				System.out.print("\033[H\033[2J");
 				System.out.flush();
