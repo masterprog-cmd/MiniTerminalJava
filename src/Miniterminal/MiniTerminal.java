@@ -6,6 +6,7 @@ import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -14,18 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jline.builtins.Commands;
 import org.jline.builtins.Completers;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReader.Option;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.MaskingCallback;
+import org.jline.reader.ParsedLine;
 import org.jline.reader.Parser;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
+import org.jline.utils.InfoCmp.Capability;
 
 import Files.FileManager;
 
@@ -50,8 +54,7 @@ public class MiniTerminal {
 					errPrefix + "No puedes ejecutar esta aplicación con el usuario ROOT" + Colorize.ANSI_RESET);
 			System.exit(1);
 		}
-		clearScreen();
-		printWelcome();
+
 		TerminalBuilder builder = TerminalBuilder.builder();
 		Completer completer = new Completers.FileNameCompleter();
 		DefaultParser p3 = new DefaultParser();
@@ -76,12 +79,17 @@ public class MiniTerminal {
 				e.printStackTrace();
 			}
 		}
+		terminal.puts(Capability.clear_screen);
+		terminal.flush();
+		printWelcome();
 		while (isRunning) {
 			String line = null;
 			line = reader.readLine(printPrompt(), printPromptRight(), (MaskingCallback) null, null);
 			line = line.trim();
 			terminal.flush();
 			String[] command = line.split(" ");
+			ParsedLine pl = reader.getParser().parse(line, 0);
+			String[] argv = pl.words().subList(1, pl.words().size()).toArray(new String[0]);
 			switch (command[0].toLowerCase()) {
 			case "pwd":
 				System.out.println(wd);
@@ -184,6 +192,20 @@ public class MiniTerminal {
 				} else
 					System.out.println(prefix + "Expected almost two arguments.");
 				break;
+			case "nano":
+				try {
+					Commands.nano(terminal, System.out, System.err, Paths.get(""), argv);
+				} catch (Exception e) {
+					System.out.println(errPrefix + "An error has occurred loading nano." + Colorize.ANSI_RESET);
+				}
+				break;
+			case "history":
+				try {
+					Commands.history(reader, System.out, System.err, Paths.get(""), argv);
+				} catch (Exception e) {
+					System.out.println(errPrefix + "An error has occurred loading nano." + Colorize.ANSI_RESET);
+				}
+				break;
 			case "find":
 				if (command.length > 1) {
 					FileManager.find(command[1]);
@@ -191,16 +213,31 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost one argument");
 				break;
 			case "clear":
-				clearScreen();
+				terminal.puts(Capability.clear_screen);
+				terminal.flush();
 				break;
 			case "help":
 				if (command.length > 1)
 					printHelp(command[1]);
-				else
-					clearScreen();
-				printHelp();
+				else {
+					terminal.puts(Capability.clear_screen);
+					terminal.flush();
+					printHelp();
+				}
+			case "?":
+				if (command.length > 1)
+					printHelp(command[1]);
+				else {
+					terminal.puts(Capability.clear_screen);
+					terminal.flush();
+					printHelp();
+				}
 				break;
 			case "exit":
+				System.out.println("Quitting...");
+				System.exit(0);
+				break;
+			case "quit":
 				System.out.println("Quitting...");
 				System.exit(0);
 				break;
@@ -221,7 +258,8 @@ public class MiniTerminal {
 				+ "|__|  |__| |_______||_______|| _|      ");
 		System.out.println("\nWelcome to the help! Use: 'help [command]' for specific info of a command\n"
 				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "echo\n"
-				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "clear\n" + "help\n" + "exit" + Colorize.ANSI_RESET);
+				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "nano\n" + "history\n" + "clear\n" + "help\n" + "exit"
+				+ Colorize.ANSI_RESET);
 	}
 
 	private static void printHelp(String arg) {
@@ -268,6 +306,14 @@ public class MiniTerminal {
 			break;
 		case "find":
 			System.out.println(helpPrefix + "Use that command to search a file.\n" + "Syntax: find <search>"
+					+ Colorize.ANSI_RESET);
+			break;
+		case "nano":
+			System.out.println(helpPrefix + "Use that command to edit with nano a file.\n" + "Syntax: nano <path>"
+					+ Colorize.ANSI_RESET);
+			break;
+		case "history":
+			System.out.println(helpPrefix + "Use that command to see the last commands you used\n" + "Syntax: history"
 					+ Colorize.ANSI_RESET);
 			break;
 		case "clear":
@@ -331,21 +377,6 @@ public class MiniTerminal {
 
 	private static void printPathNotFound() {
 		System.out.println(errPrefix + "The path does not exist." + Colorize.ANSI_RESET);
-	}
-
-	private static void clearScreen() {
-		try {
-			if (systemName.contains("Windows")) {
-				System.out.print("\033[H\033[2J");
-				System.out.flush();
-				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-			} else {
-				System.out.print("\033[H\033[2J");
-				System.out.flush();
-			}
-		} catch (final Exception e) {
-			System.err.println(errPrefix + "clearScreen() no se ejecuto correctamente." + Colorize.ANSI_RESET);
-		}
 	}
 
 	public static File getWd() {
