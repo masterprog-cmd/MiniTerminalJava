@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -25,11 +26,14 @@ import org.jline.reader.MaskingCallback;
 import org.jline.reader.ParsedLine;
 import org.jline.reader.Parser;
 import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.completer.AggregateCompleter;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp.Capability;
+import org.jline.widget.AutosuggestionWidgets;
 
 import Files.FileManager;
 
@@ -39,6 +43,7 @@ public class MiniTerminal {
 	protected static String systemName = System.getProperty("os.name");
 	protected static String user = System.getProperty("user.name");
 	protected static File wd = new File(System.getProperty("user.home"));
+	private static Collection<String> commands = new ArrayList<String>();
 
 	public static String prefix = "[" + Colorize.ANSI_WHITE + "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal"
 			+ Colorize.ANSI_RESET + "] ";
@@ -54,9 +59,29 @@ public class MiniTerminal {
 					errPrefix + "No puedes ejecutar esta aplicación con el usuario ROOT" + Colorize.ANSI_RESET);
 			System.exit(1);
 		}
-
+		commands.add("pwd");
+		commands.add("cd");
+		commands.add("ls");
+		commands.add("ll");
+		commands.add("mkdir");
+		commands.add("touch");
+		commands.add("echo");
+		commands.add("cat");
+		commands.add("rm");
+		commands.add("mv");
+		commands.add("nano");
+		commands.add("history");
+		commands.add("find");
+		commands.add("clear");
+		commands.add("help");
+		commands.add("?");
+		commands.add("exit");
+		commands.add("quit");
+		System.setProperty("user.dir", System.getProperty("user.home"));
 		TerminalBuilder builder = TerminalBuilder.builder();
-		Completer completer = new Completers.FileNameCompleter();
+		builder.system(true);
+		Completer completer = new AggregateCompleter(new Completers.FileNameCompleter(),
+				new StringsCompleter(commands));
 		DefaultParser p3 = new DefaultParser();
 		p3.setEscapeChars(new char[] {});
 		Parser parser = p3;
@@ -71,6 +96,9 @@ public class MiniTerminal {
 		LineReader reader = LineReaderBuilder.builder().terminal(terminal).completer(completer).parser(parser)
 				.variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M%P > ").variable(LineReader.INDENTATION, 2)
 				.option(Option.INSERT_BRACKET, true).build();
+		// Enable autosuggestions
+		AutosuggestionWidgets autosuggestionWidgets = new AutosuggestionWidgets(reader);
+		autosuggestionWidgets.enable();
 		callbacks.forEach(c -> c.accept(reader));
 		if (!callbacks.isEmpty()) {
 			try {
@@ -98,11 +126,14 @@ public class MiniTerminal {
 				if (command.length > 1) {
 					try {
 						FileManager.cd(command[1]);
+						completer = new Completers.DirectoriesCompleter(getWd());
 					} catch (Exception e) {
 						printPathNotFound();
 					}
-				} else
+				} else {
 					FileManager.cd();
+					completer = new AggregateCompleter(new Completers.DirectoriesCompleter(getWd()));
+				}
 				break;
 			case "ls":
 				if (command.length > 1) {
