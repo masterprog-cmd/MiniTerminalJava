@@ -16,7 +16,9 @@ rm <FILE>
 mv <FILE1> <FILE2>
 cat <FILE>
 find <CRITERIA>
+history
+nano
 clear
-help
-exit
+help | ?
+exit | quit
 ```

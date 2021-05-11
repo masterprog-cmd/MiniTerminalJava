@@ -14,6 +14,7 @@ public class FileManager {
 
 	public static void cd() {
 		MiniTerminal.setWd(new File(System.getProperty("user.home")));
+		System.setProperty("user.dir", System.getProperty("user.home"));
 	}
 
 	public static void cd(String arg) throws Exception {
@@ -24,9 +25,10 @@ public class FileManager {
 		if (!dir.exists()) {
 			throw new Exception();
 		}
-		if (dir.exists())
+		if (dir.exists()) {
 			MiniTerminal.setWd(dir);
-		else
+			System.setProperty("user.dir", arg);
+		} else
 			throw new Exception();
 	}
 
