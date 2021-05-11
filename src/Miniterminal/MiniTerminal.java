@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 import org.jline.builtins.Commands;
 import org.jline.builtins.Completers;
 import org.jline.reader.Completer;
+import org.jline.reader.History;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReader.Option;
 import org.jline.reader.LineReaderBuilder;
@@ -28,11 +29,13 @@ import org.jline.reader.Parser;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.completer.AggregateCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp.Capability;
+import org.jline.utils.Log;
 import org.jline.widget.AutosuggestionWidgets;
 
 import Files.FileManager;
@@ -44,6 +47,7 @@ public class MiniTerminal {
 	protected static String user = System.getProperty("user.name");
 	protected static File wd = new File(System.getProperty("user.home"));
 	private static Collection<String> commands = new ArrayList<String>();
+	private static History history = new DefaultHistory();
 
 	public static String prefix = "[" + Colorize.ANSI_WHITE + "Mini" + Colorize.ANSI_BRIGHT_RED + "Terminal"
 			+ Colorize.ANSI_RESET + "] ";
@@ -93,9 +97,11 @@ public class MiniTerminal {
 			System.out.println(errPrefix + "An error has ocurred loading the terminal.");
 			System.exit(1);
 		}
-		LineReader reader = LineReaderBuilder.builder().terminal(terminal).completer(completer).parser(parser)
-				.variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M%P > ").variable(LineReader.INDENTATION, 2)
-				.option(Option.INSERT_BRACKET, true).build();
+		LineReader reader = LineReaderBuilder.builder().terminal(terminal).history(history).completer(completer)
+				.parser(parser).variable(LineReader.SECONDARY_PROMPT_PATTERN, "%M%P > ")
+				.variable(LineReader.INDENTATION, 2).option(Option.INSERT_BRACKET, true).build();
+		history.attach(reader);
+		history.read(new File(System.getProperty("user.home"), ".minihistory").toPath(), true);
 		// Enable autosuggestions
 		AutosuggestionWidgets autosuggestionWidgets = new AutosuggestionWidgets(reader);
 		autosuggestionWidgets.enable();
@@ -121,6 +127,7 @@ public class MiniTerminal {
 			switch (command[0].toLowerCase()) {
 			case "pwd":
 				System.out.println(wd);
+				addToHistory(line);
 				break;
 			case "cd":
 				if (command.length > 1) {
@@ -134,6 +141,7 @@ public class MiniTerminal {
 					FileManager.cd();
 					completer = new AggregateCompleter(new Completers.DirectoriesCompleter(getWd()));
 				}
+				addToHistory(line);
 				break;
 			case "ls":
 				if (command.length > 1) {
@@ -148,6 +156,7 @@ public class MiniTerminal {
 					} catch (Exception e) {
 						printPathNotFound();
 					}
+				addToHistory(line);
 				break;
 			case "ll":
 				if (command.length > 1) {
@@ -162,6 +171,7 @@ public class MiniTerminal {
 					} catch (Exception e1) {
 						printPathNotFound();
 					}
+				addToHistory(line);
 				break;
 			case "mkdir":
 				if (command.length >= 1) {
@@ -172,6 +182,7 @@ public class MiniTerminal {
 					}
 				} else
 					System.out.println(prefix + "Expected almost one arguments");
+				addToHistory(line);
 				break;
 			case "touch":
 				if (command.length >= 1) {
@@ -182,6 +193,7 @@ public class MiniTerminal {
 					}
 				} else
 					System.out.println(prefix + "Expected almost one argument.");
+				addToHistory(line);
 				break;
 			case "echo":
 				if (command.length > 1) {
@@ -191,6 +203,7 @@ public class MiniTerminal {
 					}
 					System.out.println(concat);
 				}
+				addToHistory(line);
 				break;
 			case "cat":
 				if (command.length >= 1) {
@@ -201,6 +214,7 @@ public class MiniTerminal {
 					}
 				} else
 					System.out.println(prefix + "Expected almost one argument.");
+				addToHistory(line);
 				break;
 			case "rm":
 				if (command.length >= 1) {
@@ -211,17 +225,18 @@ public class MiniTerminal {
 					}
 				} else
 					System.out.println(prefix + "Expected almost one argument.");
+				addToHistory(line);
 				break;
 			case "mv":
 				if (command.length >= 2) {
 					try {
 						FileManager.mv(command[1], command[2]);
 					} catch (Exception e) {
-						System.out.println(
-								errPrefix + "[MiniTerminal] The file/directory already exists." + Colorize.ANSI_RESET);
+						System.out.println(errPrefix + "The file/directory already exists." + Colorize.ANSI_RESET);
 					}
 				} else
 					System.out.println(prefix + "Expected almost two arguments.");
+				addToHistory(line);
 				break;
 			case "nano":
 				try {
@@ -229,6 +244,7 @@ public class MiniTerminal {
 				} catch (Exception e) {
 					System.out.println(errPrefix + "An error has occurred loading nano." + Colorize.ANSI_RESET);
 				}
+				addToHistory(line);
 				break;
 			case "history":
 				try {
@@ -236,16 +252,19 @@ public class MiniTerminal {
 				} catch (Exception e) {
 					System.out.println(errPrefix + "An error has occurred loading nano." + Colorize.ANSI_RESET);
 				}
+				addToHistory(line);
 				break;
 			case "find":
 				if (command.length > 1) {
 					FileManager.find(command[1]);
 				} else
 					System.out.println(prefix + "Expected almost one argument");
+				addToHistory(line);
 				break;
 			case "clear":
 				terminal.puts(Capability.clear_screen);
 				terminal.flush();
+				addToHistory(line);
 				break;
 			case "help":
 				if (command.length > 1)
@@ -255,6 +274,8 @@ public class MiniTerminal {
 					terminal.flush();
 					printHelp();
 				}
+				addToHistory(line);
+				break;
 			case "?":
 				if (command.length > 1)
 					printHelp(command[1]);
@@ -263,13 +284,18 @@ public class MiniTerminal {
 					terminal.flush();
 					printHelp();
 				}
+				addToHistory(line);
 				break;
 			case "exit":
-				System.out.println("Quitting...");
+				System.out.println(prefix + "Quitting...");
+				addToHistory(line);
+				history.append(new File(System.getProperty("user.home"), ".minihistory").toPath(), true);
 				System.exit(0);
 				break;
 			case "quit":
-				System.out.println("Quitting...");
+				System.out.println(prefix + "Quitting...");
+				addToHistory(line);
+				history.append(new File(System.getProperty("user.home"), ".minihistory").toPath(), true);
 				System.exit(0);
 				break;
 			case "":
@@ -279,6 +305,16 @@ public class MiniTerminal {
 						errPrefix + "No such command. Try 'help' to see the avaliable commands." + Colorize.ANSI_RESET);
 				break;
 			}
+		}
+	}
+
+	private static void addToHistory(final String line) {
+		try {
+			history.add(line);
+			history.save();
+		} catch (final IOException e) {
+			Log.error("Error saving history file", e);
+			System.out.println("Error saving history file.");
 		}
 	}
 
