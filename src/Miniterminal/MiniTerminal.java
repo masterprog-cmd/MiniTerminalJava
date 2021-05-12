@@ -419,7 +419,7 @@ public class MiniTerminal {
 
 	private static String printPromptRight() {
 		String rightPrompt = new AttributedStringBuilder().style(AttributedStyle.DEFAULT)
-				.append(LocalDate.now().format(DateTimeFormatter.ISO_DATE)).append("\n")
+				.append(LocalDate.now().format(DateTimeFormatter.ISO_DATE)).append(" ")
 				.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN | AttributedStyle.BRIGHT))
 				.append(LocalTime.now().format(new DateTimeFormatterBuilder().appendValue(HOUR_OF_DAY, 2)
 						.appendLiteral(':').appendValue(MINUTE_OF_HOUR, 2).toFormatter()))
