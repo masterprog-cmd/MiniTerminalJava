@@ -240,9 +240,10 @@ public class MiniTerminal {
 				break;
 			case "nano":
 				try {
-					Commands.nano(terminal, System.out, System.err, Paths.get(""), argv);
+					FileManager.nano(terminal, argv);
 				} catch (Exception e) {
-					System.out.println(errPrefix + "An error has occurred loading nano." + Colorize.ANSI_RESET);
+					System.out.println(
+							MiniTerminal.errPrefix + "An error has occurred loading nano." + Colorize.ANSI_RESET);
 				}
 				addToHistory(line);
 				break;
