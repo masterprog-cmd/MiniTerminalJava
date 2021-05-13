@@ -124,7 +124,7 @@ public class MiniTerminal {
 			terminal.flush();
 			ParsedLine pl = reader.getParser().parse(line, 0);
 			String[] argv = pl.words().subList(1, pl.words().size()).toArray(new String[0]);
-			switch (argv[0].toLowerCase()) {
+			switch (pl.word().toLowerCase()) {
 			case "pwd":
 				System.out.println(wd);
 				addToHistory(line);
@@ -132,7 +132,7 @@ public class MiniTerminal {
 			case "cd":
 				if (argv.length > 1) {
 					try {
-						FileManager.cd(argv[1]);
+						FileManager.cd(argv[0]);
 						completer = new Completers.DirectoriesCompleter(getWd());
 					} catch (Exception e) {
 						printPathNotFound();
@@ -146,7 +146,7 @@ public class MiniTerminal {
 			case "ls":
 				if (argv.length > 1) {
 					try {
-						FileManager.ls(argv[1]);
+						FileManager.ls(argv[0]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -161,7 +161,7 @@ public class MiniTerminal {
 			case "ll":
 				if (argv.length > 1) {
 					try {
-						FileManager.ll(argv[1]);
+						FileManager.ll(argv[0]);
 					} catch (Exception e) {
 						printNotFound();
 					}
@@ -176,7 +176,7 @@ public class MiniTerminal {
 			case "mkdir":
 				if (argv.length >= 1) {
 					try {
-						FileManager.mkdir(argv[1]);
+						FileManager.mkdir(argv[0]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -187,7 +187,7 @@ public class MiniTerminal {
 			case "touch":
 				if (argv.length >= 1) {
 					try {
-						FileManager.touch(argv[1]);
+						FileManager.touch(argv[0]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -208,7 +208,7 @@ public class MiniTerminal {
 			case "cat":
 				if (argv.length >= 1) {
 					try {
-						FileManager.cat(argv[1]);
+						FileManager.cat(argv[0]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -219,7 +219,7 @@ public class MiniTerminal {
 			case "rm":
 				if (argv.length >= 1) {
 					try {
-						FileManager.rm(argv[1]);
+						FileManager.rm(argv[0]);
 					} catch (FileNotFoundException e) {
 						printNotFound();
 					}
@@ -230,7 +230,7 @@ public class MiniTerminal {
 			case "mv":
 				if (argv.length >= 2) {
 					try {
-						FileManager.mv(argv[1], argv[2]);
+						FileManager.mv(argv[0], argv[1]);
 					} catch (Exception e) {
 						System.out.println(errPrefix + "The file/directory already exists." + Colorize.ANSI_RESET);
 					}
@@ -257,7 +257,7 @@ public class MiniTerminal {
 				break;
 			case "find":
 				if (argv.length > 1) {
-					FileManager.find(argv[1]);
+					FileManager.find(argv[0]);
 				} else
 					System.out.println(prefix + "Expected almost one argument");
 				addToHistory(line);
@@ -270,7 +270,7 @@ public class MiniTerminal {
 			case "wget":
 				if (argv.length > 1) {
 					try {
-						WebManager.wget(argv[1]);
+						WebManager.wget(argv[0]);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
