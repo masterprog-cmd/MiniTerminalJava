@@ -144,7 +144,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "ls":
-				if (argv.length > 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.ls(argv[0]);
 					} catch (Exception e) {
@@ -159,7 +159,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "ll":
-				if (argv.length > 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.ll(argv[0]);
 					} catch (Exception e) {
@@ -174,7 +174,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "mkdir":
-				if (argv.length >= 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.mkdir(argv[0]);
 					} catch (Exception e) {
@@ -185,7 +185,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "touch":
-				if (argv.length >= 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.touch(argv[0]);
 					} catch (Exception e) {
@@ -206,7 +206,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "cat":
-				if (argv.length >= 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.cat(argv[0]);
 					} catch (Exception e) {
@@ -217,7 +217,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "rm":
-				if (argv.length >= 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.rm(argv[0]);
 					} catch (FileNotFoundException e) {
@@ -228,7 +228,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "mv":
-				if (argv.length >= 2) {
+				if (argv.length > 1) {
 					try {
 						FileManager.mv(argv[0], argv[1]);
 					} catch (Exception e) {
@@ -256,7 +256,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "find":
-				if (argv.length > 1) {
+				if (argv.length > 0) {
 					FileManager.find(argv[0]);
 				} else
 					System.out.println(prefix + "Expected almost one argument");
@@ -268,7 +268,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "wget":
-				if (argv.length > 1) {
+				if (argv.length > 0) {
 					try {
 						WebManager.wget(argv[0]);
 					} catch (Exception e) {
@@ -288,7 +288,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "?":
-				if (argv.length > 1)
+				if (argv.length > 0)
 					printHelp(argv[1]);
 				else {
 					terminal.puts(Capability.clear_screen);
