@@ -130,7 +130,7 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "cd":
-				if (argv.length > 1) {
+				if (argv.length > 0) {
 					try {
 						FileManager.cd(argv[0]);
 						completer = new Completers.DirectoriesCompleter(getWd());
