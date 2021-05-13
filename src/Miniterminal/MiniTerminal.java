@@ -39,6 +39,7 @@ import org.jline.utils.Log;
 import org.jline.widget.AutosuggestionWidgets;
 
 import Files.FileManager;
+import Files.WebManager;
 
 public class MiniTerminal {
 
@@ -266,6 +267,16 @@ public class MiniTerminal {
 				terminal.flush();
 				addToHistory(line);
 				break;
+			case "wget":
+				if (command.length > 1) {
+					try {
+						WebManager.wget(command[1]);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else
+					System.out.println(prefix + "Expected almost two arguments");
+				break;
 			case "help":
 				if (argv.length > 1)
 					printHelp(argv[1]);
@@ -325,7 +336,7 @@ public class MiniTerminal {
 				+ "|__|  |__| |_______||_______|| _|      ");
 		System.out.println("\nWelcome to the help! Use: 'help [command]' for specific info of a command\n"
 				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "echo\n"
-				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "nano\n" + "history\n" + "clear\n" + "help\n" + "exit"
+				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "wget\n" + "nano\n" + "history\n" + "clear\n" + "help\n" + "exit"
 				+ Colorize.ANSI_RESET);
 	}
 
@@ -375,6 +386,9 @@ public class MiniTerminal {
 			System.out.println(helpPrefix + "Use that command to search a file.\n" + "Syntax: find <search>"
 					+ Colorize.ANSI_RESET);
 			break;
+		case "wget":
+			System.out.println(
+					helpPrefix + "Use that command to download a data.\n" + "Syntax: wget <URL>" + Colorize.ANSI_RESET);
 		case "nano":
 			System.out.println(helpPrefix + "Use that command to edit with nano a file.\n" + "Syntax: nano <path>"
 					+ Colorize.ANSI_RESET);
