@@ -240,8 +240,8 @@ public class MiniTerminal {
 					+ Colorize.ANSI_RESET);
 			break;
 		case "wget":
-			System.out.println(helpPrefix + "Use that command to download a data.\n" + "Syntax: wget <path> <URL>"
-					+ Colorize.ANSI_RESET);
+			System.out.println(
+					helpPrefix + "Use that command to download a data.\n" + "Syntax: wget <URL>" + Colorize.ANSI_RESET);
 			break;
 		case "clear":
 			System.out.println(
