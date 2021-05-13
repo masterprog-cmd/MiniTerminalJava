@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+
+import org.jline.builtins.Commands;
+import org.jline.terminal.Terminal;
 
 import Miniterminal.Colorize;
 import Miniterminal.MiniTerminal;
@@ -14,6 +18,7 @@ public class FileManager {
 
 	public static void cd() {
 		MiniTerminal.setWd(new File(System.getProperty("user.home")));
+		System.setProperty("user.dir", System.getProperty("user.home"));
 	}
 
 	public static void cd(String arg) throws Exception {
@@ -24,9 +29,10 @@ public class FileManager {
 		if (!dir.exists()) {
 			throw new Exception();
 		}
-		if (dir.exists())
+		if (dir.exists()) {
 			MiniTerminal.setWd(dir);
-		else
+			System.setProperty("user.dir", arg);
+		} else
 			throw new Exception();
 	}
 
@@ -219,6 +225,13 @@ public class FileManager {
 			throw new Exception();
 	}
 
+	public static void nano(Terminal term, String[] argv) throws Exception {
+		if (!argv[0].startsWith("/")) {
+			argv[0] = relToAbs(argv[0]);
+		}
+		Commands.nano(term, System.out, System.err, Paths.get(""), argv);
+	}
+
 	public static void find(String arg) {
 		SimpleDateFormat fechaMod = new SimpleDateFormat();
 		boolean find = false;
@@ -232,7 +245,7 @@ public class FileManager {
 		System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
 		System.out.println();
 		for (int i = 0; i < listado.length; i++) {
-			if (listado[i].getName().equals(argBasic)) {
+			if (listado[i].getName().contains(argBasic)) {
 				if (listado[i].isDirectory())
 					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
 							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "/\n");
