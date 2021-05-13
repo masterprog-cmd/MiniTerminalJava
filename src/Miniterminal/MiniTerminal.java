@@ -196,9 +196,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "echo":
-				if (argv.length > 1) {
+				if (argv.length > 0) {
 					String concat = "";
-					for (int i = 1; i < argv.length; i++) {
+					for (int i = 0; i < argv.length; i++) {
 						concat = concat + " " + argv[i];
 					}
 					System.out.println(concat);
