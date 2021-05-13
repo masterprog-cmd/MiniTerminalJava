@@ -121,18 +121,17 @@ public class MiniTerminal {
 			line = reader.readLine(printPrompt(), printPromptRight(), (MaskingCallback) null, null);
 			line = line.trim();
 			terminal.flush();
-			String[] command = line.split(" ");
 			ParsedLine pl = reader.getParser().parse(line, 0);
 			String[] argv = pl.words().subList(1, pl.words().size()).toArray(new String[0]);
-			switch (command[0].toLowerCase()) {
+			switch (argv[0].toLowerCase()) {
 			case "pwd":
 				System.out.println(wd);
 				addToHistory(line);
 				break;
 			case "cd":
-				if (command.length > 1) {
+				if (argv.length > 1) {
 					try {
-						FileManager.cd(command[1]);
+						FileManager.cd(argv[1]);
 						completer = new Completers.DirectoriesCompleter(getWd());
 					} catch (Exception e) {
 						printPathNotFound();
@@ -144,9 +143,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "ls":
-				if (command.length > 1) {
+				if (argv.length > 1) {
 					try {
-						FileManager.ls(command[1]);
+						FileManager.ls(argv[1]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -159,9 +158,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "ll":
-				if (command.length > 1) {
+				if (argv.length > 1) {
 					try {
-						FileManager.ll(command[1]);
+						FileManager.ll(argv[1]);
 					} catch (Exception e) {
 						printNotFound();
 					}
@@ -174,9 +173,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "mkdir":
-				if (command.length >= 1) {
+				if (argv.length >= 1) {
 					try {
-						FileManager.mkdir(command[1]);
+						FileManager.mkdir(argv[1]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -185,9 +184,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "touch":
-				if (command.length >= 1) {
+				if (argv.length >= 1) {
 					try {
-						FileManager.touch(command[1]);
+						FileManager.touch(argv[1]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -196,19 +195,19 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "echo":
-				if (command.length > 1) {
+				if (argv.length > 1) {
 					String concat = "";
-					for (int i = 1; i < command.length; i++) {
-						concat = concat + " " + command[i];
+					for (int i = 1; i < argv.length; i++) {
+						concat = concat + " " + argv[i];
 					}
 					System.out.println(concat);
 				}
 				addToHistory(line);
 				break;
 			case "cat":
-				if (command.length >= 1) {
+				if (argv.length >= 1) {
 					try {
-						FileManager.cat(command[1]);
+						FileManager.cat(argv[1]);
 					} catch (Exception e) {
 						printPathNotFound();
 					}
@@ -217,9 +216,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "rm":
-				if (command.length >= 1) {
+				if (argv.length >= 1) {
 					try {
-						FileManager.rm(command[1]);
+						FileManager.rm(argv[1]);
 					} catch (FileNotFoundException e) {
 						printNotFound();
 					}
@@ -228,9 +227,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "mv":
-				if (command.length >= 2) {
+				if (argv.length >= 2) {
 					try {
-						FileManager.mv(command[1], command[2]);
+						FileManager.mv(argv[1], argv[2]);
 					} catch (Exception e) {
 						System.out.println(errPrefix + "The file/directory already exists." + Colorize.ANSI_RESET);
 					}
@@ -256,8 +255,8 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "find":
-				if (command.length > 1) {
-					FileManager.find(command[1]);
+				if (argv.length > 1) {
+					FileManager.find(argv[1]);
 				} else
 					System.out.println(prefix + "Expected almost one argument");
 				addToHistory(line);
@@ -268,8 +267,8 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "help":
-				if (command.length > 1)
-					printHelp(command[1]);
+				if (argv.length > 1)
+					printHelp(argv[1]);
 				else {
 					terminal.puts(Capability.clear_screen);
 					terminal.flush();
@@ -278,8 +277,8 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "?":
-				if (command.length > 1)
-					printHelp(command[1]);
+				if (argv.length > 1)
+					printHelp(argv[1]);
 				else {
 					terminal.puts(Capability.clear_screen);
 					terminal.flush();
