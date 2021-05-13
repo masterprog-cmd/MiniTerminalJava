@@ -1,4 +1,4 @@
-package Miniterminal;
+package miniTerminal;
 
 import static java.time.temporal.ChronoField.HOUR_OF_DAY;
 import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
@@ -38,8 +38,8 @@ import org.jline.utils.InfoCmp.Capability;
 import org.jline.utils.Log;
 import org.jline.widget.AutosuggestionWidgets;
 
-import Files.FileManager;
-import Files.WebManager;
+import managers.FileManager;
+import managers.WebManager;
 
 public class MiniTerminal {
 

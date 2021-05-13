@@ -1,4 +1,4 @@
-package Jline;
+package jline;
 
 import static org.jline.keymap.KeyMap.ctrl;
 import static org.jline.keymap.KeyMap.key;

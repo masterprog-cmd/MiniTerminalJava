@@ -1,4 +1,4 @@
-package Files;
+package managers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,8 +11,8 @@ import java.util.Arrays;
 import org.jline.builtins.Commands;
 import org.jline.terminal.Terminal;
 
-import Miniterminal.Colorize;
-import Miniterminal.MiniTerminal;
+import miniTerminal.Colorize;
+import miniTerminal.MiniTerminal;
 
 public class FileManager {
 

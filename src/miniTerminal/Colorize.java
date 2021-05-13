@@ -1,4 +1,4 @@
-package Miniterminal;
+package miniTerminal;
 
 public class Colorize {
 
