@@ -278,8 +278,8 @@ public class MiniTerminal {
 					System.out.println(prefix + "Expected almost two arguments");
 				break;
 			case "help":
-				if (argv.length > 1)
-					printHelp(argv[1]);
+				if (argv.length > 0)
+					printHelp(argv[0]);
 				else {
 					terminal.puts(Capability.clear_screen);
 					terminal.flush();
