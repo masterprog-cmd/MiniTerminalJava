@@ -268,9 +268,9 @@ public class MiniTerminal {
 				addToHistory(line);
 				break;
 			case "wget":
-				if (command.length > 1) {
+				if (argv.length > 1) {
 					try {
-						WebManager.wget(command[1]);
+						WebManager.wget(argv[1]);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -336,8 +336,8 @@ public class MiniTerminal {
 				+ "|__|  |__| |_______||_______|| _|      ");
 		System.out.println("\nWelcome to the help! Use: 'help [command]' for specific info of a command\n"
 				+ "Avaliable commands:\n" + "pwd\n" + "cd\n" + "ls\n" + "ll\n" + "mkdir\n" + "touch\n" + "echo\n"
-				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "wget\n" + "nano\n" + "history\n" + "clear\n" + "help\n" + "exit"
-				+ Colorize.ANSI_RESET);
+				+ "cat\n" + "rm\n" + "mv\n" + "find\n" + "wget\n" + "nano\n" + "history\n" + "clear\n" + "help\n"
+				+ "exit" + Colorize.ANSI_RESET);
 	}
 
 	private static void printHelp(String arg) {
