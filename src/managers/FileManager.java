@@ -1,16 +1,23 @@
-package Files;
+package managers;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import Miniterminal.MiniTerminal;
+import org.jline.builtins.Commands;
+import org.jline.terminal.Terminal;
+
+import miniTerminal.MiniTerminal;
 
 public class FileManager {
 
 	public static void cd() {
 		MiniTerminal.setWd(new File(System.getProperty("user.home")));
+		System.setProperty("user.dir", System.getProperty("user.home"));
 	}
 
 	public static void cd(String arg) throws Exception {
@@ -21,10 +28,11 @@ public class FileManager {
 		if (!dir.exists()) {
 			throw new Exception();
 		}
-		if (dir.exists())
+		if (dir.exists()) {
 			MiniTerminal.setWd(dir);
-		else
-			throw new Exception("The directory does not exist.");
+			System.setProperty("user.dir", arg);
+		} else
+			throw new Exception();
 	}
 
 	public static boolean mkdir(String arg) throws Exception {
@@ -191,7 +199,58 @@ public class FileManager {
 			a.renameTo(b);
 		} else
 			throw new Exception();
+	}
+	
+	public static void cat(String arg) throws Exception {
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File a = new File(arg);
+		if (!a.exists()) {
+			throw new Exception();
+		} else {
+			try (BufferedReader br = new BufferedReader(new FileReader(a))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+				}
+			}
+		}
+	}
 
+	public static void nano(Terminal term, String[] argv) throws Exception {
+		if (!argv[0].startsWith("/")) {
+			argv[0] = relToAbs(argv[0]);
+		}
+		Commands.nano(term, System.out, System.err, Paths.get(""), argv);
+	}
+
+	public static void find(String arg) {
+		SimpleDateFormat fechaMod = new SimpleDateFormat();
+		boolean find = false;
+		String argBasic = arg;
+		if (!arg.startsWith("/")) {
+			arg = relToAbs(arg);
+		}
+		File a = new File(arg).getParentFile();
+		File[] listado = a.listFiles();
+		Arrays.sort(listado);
+		System.out.format("%6s%16s%27s", "Size", "ModDate", "Name");
+		System.out.println();
+		for (int i = 0; i < listado.length; i++) {
+			if (listado[i].getName().contains(argBasic)) {
+				if (listado[i].isDirectory())
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "/\n");
+				else
+					System.out.format("%15s%12s%25s", listado[i].length() + " bytes  ",
+							fechaMod.format(listado[i].lastModified()), "  " + listado[i].getName() + "\n");
+				find = true;
+			}
+		}
+		if (!find) {
+			System.out.println(MiniTerminal.prefix + "No results were found with this criterion.");
+		}
 	}
 
 	public static String relToAbs(String relPath) {
