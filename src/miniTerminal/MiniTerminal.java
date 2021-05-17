@@ -313,7 +313,7 @@ public class MiniTerminal {
 				break;
 			default:
 				System.out.println(
-						errPrefix + "No such command. Try 'help' to see the avaliable commands." + Colorize.ANSI_RESET);
+						errPrefix + "No such command. Try 'help' to see the avaliable commands. " + Colorize.ANSI_RESET);
 				break;
 			}
 		}

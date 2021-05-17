@@ -18,7 +18,6 @@ pwd
 cd <DIR>
 ls
 ll
-echo
 mkdir <DIR>
 touch <FILE>
 rm <FILE>
