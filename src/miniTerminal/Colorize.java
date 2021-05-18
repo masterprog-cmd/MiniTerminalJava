@@ -1,9 +1,22 @@
 package miniTerminal;
 
+/* *
+ * 
+ * This class its for save a the constants of the console color
+ * That we uses it in the main class and the managers.
+ * 
+ * 
+ * MiniTerminal Java 
+ * by @alejandrofan2 | @masterprog-cmd 
+ * 
+ * */
+
 public class Colorize {
 
+	// Reset the color.
 	public static final String ANSI_RESET = "\u001B[0m";
 
+	// Change the color of the letter.
 	public static final String ANSI_BLACK = "\u001B[30m";
 	public static final String ANSI_RED = "\u001B[31m";
 	public static final String ANSI_GREEN = "\u001B[32m";
@@ -22,6 +35,7 @@ public class Colorize {
 	public static final String ANSI_BRIGHT_CYAN = "\u001B[96m";
 	public static final String ANSI_BRIGHT_WHITE = "\u001B[97m";
 
+	// Change the color of the background.
 	public static final String ANSI_BG_BLACK = "\u001B[40m";
 	public static final String ANSI_BG_RED = "\u001B[41m";
 	public static final String ANSI_BG_GREEN = "\u001B[42m";
