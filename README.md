@@ -1,4 +1,5 @@
 # MiniTerminal 🗃️
+## Versión Final
 
 > El proyecto no seguira mantenido despues de su finalización.
 
@@ -15,18 +16,19 @@ Funciones de la terminal:
 Algunos de los comandos que implementaremos son:
 ```
 pwd
-cd <DIR>
-ls
-ll
+cd [DIR]
+ls [DIR]
+ll [DIR]
 mkdir <DIR>
 touch <FILE>
 rm <FILE>
 mv <FILE1> <FILE2>
 cat <FILE>
 find <CRITERIA>
-history
-nano
+wget <URL> [FILE]
+history [NUM]
+nano [FILE]
 clear
-help | ?
+help [COMMAND] | ? [COMMAND]
 exit | quit
 ```
