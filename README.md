@@ -26,13 +26,13 @@ Nuestra intención era crear una terminal lo mas optimizada posible para la gest
   > You can also use IDES like eclipse to quickly compile your code.
 
 
-Terminal functions:
+### Terminal functions:
 - Autocomplete files, directories and commands
 - Persistent history
 - Multiline
 - Autosuggestions
 
-List of commands implemented:
+### List of commands implemented:
 ```
 pwd
 cd [DIR]
